@@ -6,102 +6,110 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2026 Block 1 Circuit</title>
+    <title>Workout History Log</title>
     
-    <!-- PWA Manifest Inline (for compatibility) -->
-    <link rel="manifest" href="data:application/manifest+json,{'name':'2026 Workout','short_name':'Workout','start_url':'.','display':'standalone','background_color':'#000000','theme_color':'#3b82f6','icons':[{'src':'https://cdn-icons-png.flaticon.com/512/2964/2964514.png','sizes':'512x512','type':'image/png'}]}">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #000000; color: #ffffff;
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
         .card { background: #111; border: 1px solid #222; }
         .slider {
-            -webkit-appearance: none; width: 100%; height: 8px;
+            -webkit-appearance: none; width: 100%; height: 6px;
             border-radius: 5px; background: #333; outline: none;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none; width: 24px; height: 24px;
             border-radius: 50%; background: #3b82f6; cursor: pointer;
         }
-        .btn-toggle { transition: all 0.2s ease; }
-        .selected-yes { background-color: #ef4444 !important; color: white; border-color: #ef4444; }
-        .selected-no { background-color: #22c55e !important; color: white; border-color: #22c55e; }
-        /* Hide scrollbar but keep functionality */
+        .selected-yes { background-color: #ef4444 !important; border-color: #ef4444; }
+        .selected-no { background-color: #22c55e !important; border-color: #22c55e; }
+        .tab-active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4 pb-32 md:max-w-lg md:mx-auto">
+<body class="p-4 pb-40 md:max-w-lg md:mx-auto">
 
-    <header class="mb-6 flex justify-between items-end">
-        <div>
-            <h1 class="text-2xl font-black text-blue-500 tracking-tighter italic">CIRCUIT LOG</h1>
+    <!-- Tabs Navigation -->
+    <nav class="flex border-b border-zinc-800 mb-6">
+        <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider tab-active text-zinc-400">Current Session</button>
+        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-400">History Log</button>
+    </nav>
+
+    <!-- ACTIVE SESSION VIEW -->
+    <main id="view-active" class="block">
+        <header class="mb-6">
+            <h1 id="routine-title" class="text-2xl font-black text-blue-500 italic uppercase">Loading...</h1>
             <p id="current-date" class="text-zinc-500 font-mono text-[10px] uppercase"></p>
+        </header>
+
+        <section class="card rounded-2xl p-5 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">MG Fatigue (<span id="mg-val">1</span>)</label>
+                    <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue" oninput="updateRangeVal('mg', this.value)">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">Readiness (<span id="rd-val">5</span>)</label>
+                    <input type="range" min="1" max="5" value="5" class="slider" id="readiness" oninput="updateRangeVal('rd', this.value)">
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-zinc-800">
+                <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">Right Knee Pain?</label>
+                <div class="flex space-x-2">
+                    <button onclick="setKneePain(false)" id="knee-no" class="flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs">NO</button>
+                    <button onclick="setKneePain(true)" id="knee-yes" class="flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs">YES</button>
+                </div>
+                <div id="knee-notes-container" class="hidden mt-3">
+                    <textarea id="knee-notes" placeholder="Pain details..." class="w-full bg-zinc-950 border border-red-900/30 rounded-xl p-3 text-sm text-white focus:outline-none" rows="2" oninput="saveCurrent()"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <div id="circuit-list" class="space-y-10"></div>
+
+        <div class="mt-10 mb-20 text-center">
+            <button onclick="completeSession()" class="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-900/20 uppercase tracking-widest">
+                Complete & Log Session
+            </button>
         </div>
-        <div id="routine-indicator" class="px-3 py-1 bg-zinc-800 rounded-full text-[10px] font-bold text-zinc-400 border border-zinc-700"></div>
-    </header>
+    </main>
 
-    <!-- Readiness & Knee Check -->
-    <section class="card rounded-2xl p-5 mb-6">
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div>
-                <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">MG Fatigue</label>
-                <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">Readiness</label>
-                <input type="range" min="1" max="5" value="5" class="slider" id="readiness">
-            </div>
+    <!-- HISTORY VIEW -->
+    <main id="view-history" class="hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold italic">SAVED LOGS</h2>
+            <button onclick="clearHistory()" class="text-[10px] text-red-500 font-bold uppercase">Clear All</button>
+        </div>
+        
+        <div id="history-container" class="space-y-3">
+            <!-- History items inject here -->
         </div>
 
-        <div class="pt-4 border-t border-zinc-800">
-            <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">Right Knee Pain?</label>
-            <div class="flex space-x-2">
-                <button onclick="setKneePain(false)" id="knee-no" class="btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 selected-no text-xs">NO</button>
-                <button onclick="setKneePain(true)" id="knee-yes" class="btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs">YES</button>
-            </div>
-            <div id="knee-notes-container" class="hidden mt-3">
-                <textarea id="knee-notes" placeholder="Pain details..." class="w-full bg-zinc-950 border border-red-900/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-600" rows="2"></textarea>
-            </div>
+        <div class="mt-8 space-y-3">
+            <button onclick="copyHistory()" class="w-full py-4 bg-zinc-100 text-black font-black rounded-2xl uppercase text-xs">
+                Copy All History for Sheets
+            </button>
         </div>
-    </section>
+    </main>
 
-    <!-- Circuit Container -->
-    <div id="circuit-list" class="space-y-10"></div>
-
-    <!-- Sticky Export -->
-    <div class="fixed bottom-0 left-0 right-0 p-4 bg-black/90 backdrop-blur-lg border-t border-zinc-800 md:max-w-lg md:mx-auto z-50">
-        <button onclick="exportLog()" class="w-full py-4 bg-blue-600 text-white font-black rounded-2xl uppercase text-sm shadow-lg shadow-blue-900/20 active:scale-95 transition-transform">
-            Export Master Log
-        </button>
-        <p id="status-msg" class="text-center text-[10px] text-green-500 font-mono mt-2 hidden">COPIED TO CLIPBOARD</p>
+    <!-- Global Footer -->
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-black/90 backdrop-blur-lg border-t border-zinc-900 md:max-w-lg md:mx-auto">
+        <div class="flex justify-between items-center">
+            <span id="history-badge" class="px-2 py-1 bg-blue-900/40 text-blue-400 text-[10px] rounded-lg font-bold border border-blue-800/30">
+                0 SESSIONS SAVED
+            </span>
+            <span id="save-indicator" class="text-[10px] font-mono text-zinc-600 italic uppercase">Auto-saved</span>
+        </div>
     </div>
 
     <script>
         const routines = {
-            strength: {
-                title: "Strength & Alignment",
-                exercises: [
-                    { name: "Scapular Pull-ups", target: "10 Reps" },
-                    { name: "Hollow Body Holds", target: "30-45s" },
-                    { name: "Banded Leg Alignment", target: "15 Reps" }
-                ],
-                rounds: 3
-            },
-            mobility: {
-                title: "Mobility & Skill",
-                exercises: [
-                    { name: "Planche Leans", target: "Max Lean" },
-                    { name: "Hip Mobility (90/90)", target: "1m/side" },
-                    { name: "Ankle Mobility", target: "15r/side" }
-                ],
-                rounds: 3
-            }
+            strength: { title: "Strength & Alignment", exercises: [{name:"Scapular Pull-ups", target:"10r"}, {name:"Hollow Body Holds", target:"30-45s"}, {name:"Banded Leg Align", target:"15r"}], rounds: 3 },
+            mobility: { title: "Mobility & Skill", exercises: [{name:"Planche Leans", target:"Hold"}, {name:"Hip 90/90", target:"1m/s"}, {name:"Ankle Mobility", target:"15r/s"}], rounds: 3 }
         };
 
         let currentType = 'strength';
@@ -109,45 +117,46 @@
 
         function init() {
             const day = new Date().getDay();
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             currentType = [0, 2, 4].includes(day) ? 'strength' : 'mobility';
-            document.getElementById('routine-indicator').innerText = routines[currentType].title;
+            document.getElementById('routine-title').innerText = routines[currentType].title;
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            
             renderCircuit();
-            registerServiceWorker();
-        }
+            loadCurrent();
+            updateHistoryView();
 
-        function setKneePain(val) {
-            hasKneePain = val;
-            document.getElementById('knee-yes').className = val ? 'btn-toggle flex-1 py-3 rounded-xl font-bold selected-yes text-xs' : 'btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs';
-            document.getElementById('knee-no').className = !val ? 'btn-toggle flex-1 py-3 rounded-xl font-bold selected-no text-xs' : 'btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs';
-            document.getElementById('knee-notes-container').style.display = val ? 'block' : 'none';
+            // Set up listeners for all inputs for auto-saving
+            document.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    saveCurrent();
+                    showSaved();
+                }
+            });
         }
 
         function renderCircuit() {
             const container = document.getElementById('circuit-list');
             const data = routines[currentType];
             let html = "";
-
             for (let r = 1; r <= data.rounds; r++) {
                 html += `
                     <div class="space-y-4">
-                        <div class="flex items-center space-x-2 px-1">
-                            <span class="h-px flex-1 bg-zinc-800"></span>
-                            <h2 class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">Round ${r}</h2>
-                            <span class="h-px flex-1 bg-zinc-800"></span>
+                        <div class="flex items-center space-x-2">
+                            <h2 class="text-[10px] font-black text-zinc-700 uppercase tracking-widest">Round ${r}</h2>
+                            <span class="h-px flex-1 bg-zinc-900"></span>
                         </div>
-                        ${data.exercises.map((ex, exIdx) => `
+                        ${data.exercises.map(ex => `
                             <div class="card rounded-2xl p-4">
                                 <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <h3 class="text-sm font-bold text-white">${ex.name}</h3>
-                                        <p class="text-[10px] text-zinc-500 uppercase font-bold">${ex.target}</p>
+                                    <div onclick="toggleCheck('${r}-${ex.name}')" class="cursor-pointer">
+                                        <h3 class="text-sm font-bold">${ex.name}</h3>
+                                        <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-tighter">${ex.target}</p>
                                     </div>
-                                    <input type="checkbox" class="round-check" data-round="${r}" data-ex="${ex.name}">
+                                    <input type="checkbox" class="round-check w-6 h-6 rounded-lg bg-zinc-900 border-zinc-700 accent-blue-600" data-id="${r}-${ex.name}">
                                 </div>
-                                <input type="text" placeholder="Notes for this set..." 
-                                    class="round-note w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-400 focus:outline-none focus:border-blue-900"
-                                    data-round="${r}" data-ex="${ex.name}">
+                                <input type="text" placeholder="Notes (optional)..." 
+                                    class="round-note w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 focus:outline-none"
+                                    data-id="n-${r}-${ex.name}">
                             </div>
                         `).join('')}
                     </div>
@@ -156,44 +165,140 @@
             container.innerHTML = html;
         }
 
-        function exportLog() {
+        function toggleCheck(id) {
+            const el = document.querySelector(`[data-id="${id}"]`);
+            el.checked = !el.checked;
+            saveCurrent();
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-active').style.display = tab === 'active' ? 'block' : 'none';
+            document.getElementById('view-history').style.display = tab === 'history' ? 'block' : 'none';
+            document.getElementById('tab-active').className = tab === 'active' ? 'flex-1 py-3 text-xs font-bold uppercase tracking-wider tab-active' : 'flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500';
+            document.getElementById('tab-history').className = tab === 'history' ? 'flex-1 py-3 text-xs font-bold uppercase tracking-wider tab-active' : 'flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500';
+            if (tab === 'history') updateHistoryView();
+        }
+
+        function updateRangeVal(type, val) {
+            document.getElementById(`${type}-val`).innerText = val;
+            saveCurrent();
+        }
+
+        function setKneePain(val) {
+            hasKneePain = val;
+            document.getElementById('knee-yes').className = val ? 'flex-1 py-3 rounded-xl font-bold selected-yes text-xs' : 'flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs text-zinc-500';
+            document.getElementById('knee-no').className = !val ? 'flex-1 py-3 rounded-xl font-bold selected-no text-xs' : 'flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs text-zinc-500';
+            document.getElementById('knee-notes-container').style.display = val ? 'block' : 'none';
+            saveCurrent();
+        }
+
+        function saveCurrent() {
+            const data = {
+                mg: document.getElementById('mg-fatigue').value,
+                ready: document.getElementById('readiness').value,
+                knee: hasKneePain,
+                kneeNotes: document.getElementById('knee-notes').value,
+                checks: {},
+                notes: {}
+            };
+            document.querySelectorAll('.round-check').forEach(c => data.checks[c.dataset.id] = c.checked);
+            document.querySelectorAll('.round-note').forEach(n => data.notes[n.dataset.id] = n.value);
+            localStorage.setItem('current_workout', JSON.stringify(data));
+        }
+
+        function loadCurrent() {
+            const saved = localStorage.getItem('current_workout');
+            if (!saved) { setKneePain(false); return; }
+            const data = JSON.parse(saved);
+            document.getElementById('mg-fatigue').value = data.mg;
+            document.getElementById('mg-val').innerText = data.mg;
+            document.getElementById('readiness').value = data.ready;
+            document.getElementById('rd-val').innerText = data.ready;
+            setKneePain(data.knee);
+            document.getElementById('knee-notes').value = data.kneeNotes || "";
+            document.querySelectorAll('.round-check').forEach(c => c.checked = data.checks[c.dataset.id] || false);
+            document.querySelectorAll('.round-note').forEach(n => n.value = data.notes[n.dataset.id] || "");
+        }
+
+        function completeSession() {
             const date = new Date().toISOString().split('T')[0];
             const mg = document.getElementById('mg-fatigue').value;
             const ready = document.getElementById('readiness').value;
             const knee = hasKneePain ? `YES (${document.getElementById('knee-notes').value})` : "NO";
             
-            let workoutSummary = [];
-            document.querySelectorAll('.round-check').forEach((check, i) => {
-                if(check.checked) {
-                    const note = document.querySelectorAll('.round-note')[i].value;
-                    workoutSummary.push(`R${check.dataset.round} ${check.dataset.ex}${note ? ' ('+note+')' : ''}`);
+            let exercises = [];
+            document.querySelectorAll('.round-check').forEach(c => {
+                if (c.checked) {
+                    const note = document.querySelector(`[data-id="n-${c.dataset.id}"]`).value;
+                    exercises.push(`R${c.dataset.id.split('-')[0]} ${c.dataset.id.split('-')[1]}${note ? ': '+note : ''}`);
                 }
             });
 
-            const output = `DATE: ${date} | MG: ${mg} | READY: ${ready} | KNEE: ${knee} | LOG: ${workoutSummary.join('; ')}`;
+            if (exercises.length === 0) {
+                if (!confirm("You haven't checked any exercises. Log this session anyway?")) return;
+            }
+
+            const logEntry = `${date} | MG:${mg} | RDY:${ready} | KNEE:${knee} | LOG: ${exercises.join('; ')}`;
             
+            // Add to History
+            const history = JSON.parse(localStorage.getItem('workout_history') || "[]");
+            history.unshift(logEntry); // Newest first
+            localStorage.setItem('workout_history', JSON.stringify(history));
+
+            // Clear Current Session
+            localStorage.removeItem('current_workout');
+            alert("Session logged to history!");
+            location.reload();
+        }
+
+        function updateHistoryView() {
+            const history = JSON.parse(localStorage.getItem('workout_history') || "[]");
+            const container = document.getElementById('history-container');
+            document.getElementById('history-badge').innerText = `${history.length} SESSION${history.length === 1 ? '' : 'S'} SAVED`;
+
+            if (history.length === 0) {
+                container.innerHTML = `<p class="text-zinc-600 text-xs italic text-center py-10">No saved history yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = history.map((log, i) => `
+                <div class="card p-3 rounded-xl text-[10px] font-mono leading-relaxed relative">
+                    <div class="text-blue-500 font-bold mb-1">${log.split(' | ')[0]}</div>
+                    <div class="text-zinc-400">${log.split(' | ').slice(1).join(' | ')}</div>
+                </div>
+            `).join('');
+        }
+
+        function copyHistory() {
+            const history = JSON.parse(localStorage.getItem('workout_history') || "[]");
+            if (history.length === 0) return;
+            
+            const textToCopy = history.join('\n');
             const el = document.createElement('textarea');
-            el.value = output;
+            el.value = textToCopy;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-
-            const msg = document.getElementById('status-msg');
-            msg.classList.remove('hidden');
-            setTimeout(() => msg.classList.add('hidden'), 3000);
+            
+            alert("Copied all " + history.length + " logs to clipboard!");
         }
 
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
-                `;
-                const blob = new Blob([swCode], {type: 'text/javascript'});
-                const url = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(url);
+        function clearHistory() {
+            if (confirm("Permanently delete all saved history? Make sure you have pasted it into your Sheet first!")) {
+                localStorage.setItem('workout_history', "[]");
+                updateHistoryView();
             }
+        }
+
+        function showSaved() {
+            const ind = document.getElementById('save-indicator');
+            ind.innerText = "Saving...";
+            ind.style.color = "#3b82f6";
+            setTimeout(() => {
+                ind.innerText = "Auto-saved";
+                ind.style.color = "#3f3f46";
+            }, 800);
         }
 
         init();
