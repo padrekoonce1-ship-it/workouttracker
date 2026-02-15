@@ -6,11 +6,10 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2026 Sprint 1 - Week 2</title>
+    <title>2026 Lexicon Logger</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Global font size increase (approx +2pt) */
         html { font-size: 18px; } 
         body {
             background-color: #000000; color: #ffffff;
@@ -23,17 +22,21 @@
             border-radius: 5px; background: #333; outline: none;
         }
         .slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 30px; height: 30px;
+            -webkit-appearance: none; width: 32px; height: 32px;
             border-radius: 50%; background: #3b82f6; cursor: pointer;
         }
-        .btn-choice {
-            padding: 12px; border-radius: 12px; background: #1a1a1a;
-            border: 1px solid #333; font-weight: bold; font-size: 0.9rem;
-            transition: all 0.2s ease;
+        .btn-lexicon {
+            padding: 10px; border-radius: 12px; background: #1a1a1a;
+            border: 1px solid #333; font-weight: bold; font-size: 0.75rem;
+            text-align: center; color: #71717a; transition: all 0.2s ease;
         }
-        .btn-choice.selected { background: #3b82f6; border-color: #3b82f6; color: white; }
-        .btn-choice.selected-no { background: #22c55e; border-color: #22c55e; color: white; }
-        .btn-choice.selected-yes { background: #ef4444; border-color: #ef4444; color: white; }
+        .btn-lexicon.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .btn-choice {
+            padding: 14px; border-radius: 14px; background: #1a1a1a;
+            border: 1px solid #333; font-weight: bold; font-size: 0.85rem;
+        }
+        .btn-choice.active-green { background: #22c55e; color: white; border-color: #22c55e; }
+        .btn-choice.active-red { background: #ef4444; color: white; border-color: #ef4444; }
         
         .tab-active { color: #3b82f6; border-bottom: 3px solid #3b82f6; }
         ::-webkit-scrollbar { display: none; }
@@ -41,279 +44,337 @@
 </head>
 <body class="p-4 pb-40 md:max-w-lg md:mx-auto">
 
-    <!-- Header & Tabs -->
-    <header class="mb-4">
-        <h1 id="routine-title" class="text-2xl font-black text-blue-500 italic uppercase">Sprint 1 / Week 2</h1>
-        <p id="current-date" class="text-zinc-500 font-mono text-xs uppercase"></p>
+    <header class="mb-4 flex justify-between items-start">
+        <div>
+            <h1 id="routine-display" class="text-2xl font-black text-blue-500 italic uppercase">Loading...</h1>
+            <p id="current-date" class="text-zinc-500 font-mono text-xs uppercase"></p>
+        </div>
+        <div id="save-status" class="text-[9px] font-bold text-zinc-700 bg-zinc-900 px-2 py-1 rounded">AUTO-SAVE: ON</div>
     </header>
 
-    <nav class="flex border-b border-zinc-800 mb-6 sticky top-0 bg-black z-10">
+    <nav class="flex border-b border-zinc-800 mb-6 sticky top-0 bg-black z-20">
         <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 text-sm font-bold uppercase tracking-wider tab-active">Session</button>
-        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 text-sm font-bold uppercase tracking-wider text-zinc-500">History</button>
+        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 text-sm font-bold uppercase tracking-wider text-zinc-500">History Log</button>
     </nav>
 
     <!-- ACTIVE SESSION VIEW -->
-    <main id="view-active" class="block space-y-8">
+    <main id="view-active" class="block space-y-10">
         
-        <!-- PHASE 1: PRE-WORKOUT -->
+        <!-- I. PRE-WORKOUT REPORT -->
         <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-widest pl-1">I. Pre-Workout Report</h2>
-            <div class="card rounded-2xl p-5 space-y-6">
-                <div>
-                    <label class="block text-xs font-bold mb-3 uppercase text-zinc-500">MG Fatigue (1-5)</label>
-                    <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue" oninput="saveCurrent()">
+            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">I. [PRE-WORKOUT_REPORT]</h2>
+            <div class="card rounded-3xl p-6 space-y-8">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">MG Fatigue</label>
+                        <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue" oninput="save()">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">Readiness</label>
+                        <input type="range" min="1" max="5" value="5" class="slider" id="readiness" oninput="save()">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold mb-3 uppercase text-zinc-500">General Readiness (1-5)</label>
-                    <input type="range" min="1" max="5" value="5" class="slider" id="readiness" oninput="saveCurrent()">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-bold uppercase text-zinc-500">Hydration</label>
-                        <select id="pre-hydration" class="w-full bg-zinc-900 border border-zinc-700 p-3 rounded-xl text-sm" onchange="saveCurrent()">
-                            <option value="On Target">On Target</option>
-                            <option value="Below Target">Below Target</option>
-                            <option value="Above Target">Above Target</option>
+
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase text-zinc-500">Nutrition Targets</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="pre-hydration" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm" onchange="save()">
+                            <option value="On Target">Hydration: On Target</option>
+                            <option value="Below Target">Hydration: Below</option>
+                            <option value="Above Target">Hydration: Above</option>
+                        </select>
+                        <select id="pre-protein" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm" onchange="save()">
+                            <option value="130g Protein">130g Protein: On</option>
+                            <option value="Below 130g">130g Protein: Below</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-bold uppercase text-zinc-500">[VIBE] Lexicon</label>
+                    <div class="grid grid-cols-2 gap-2" id="vibe-container">
+                        <button onclick="toggleLexicon('vibe', 'LEAN & CLEAN')" class="btn-lexicon">LEAN & CLEAN</button>
+                        <button onclick="toggleLexicon('vibe', 'SILENT STERNUM')" class="btn-lexicon">SILENT STERNUM</button>
+                        <button onclick="toggleLexicon('vibe', 'FATIGUED')" class="btn-lexicon">FATIGUED</button>
+                        <button onclick="toggleLexicon('vibe', 'BRONCHIAL LOAD')" class="btn-lexicon">BRONCHIAL LOAD</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- II. WORKOUT REPORT -->
+        <section class="space-y-4">
+            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">II. [WORKOUT_REPORT]</h2>
+            <div class="card rounded-3xl p-6 mb-4">
+                <label class="block text-[10px] font-bold uppercase text-zinc-500 mb-3">Primary [FOCUS]</label>
+                <div class="grid grid-cols-2 gap-2" id="focus-container">
+                    <button onclick="toggleLexicon('focus', 'STERNAL INTEGRITY')" class="btn-lexicon">STERNAL INTEGRITY</button>
+                    <button onclick="toggleLexicon('focus', 'SCAPULAR TRACKING')" class="btn-lexicon">SCAPULAR TRACKING</button>
+                    <button onclick="toggleLexicon('focus', 'KNEE SANCTUARY')" class="btn-lexicon">KNEE SANCTUARY</button>
+                    <button onclick="toggleLexicon('focus', 'RIB-KNIT')" class="btn-lexicon">RIB-KNIT</button>
+                </div>
+            </div>
+            <div id="workout-content" class="space-y-8"></div>
+        </section>
+
+        <!-- III. POST-WORKOUT REPORT -->
+        <section class="space-y-4">
+            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">III. [POST-WORKOUT_REPORT]</h2>
+            <div class="card rounded-3xl p-6 space-y-8">
+                <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-bold uppercase text-zinc-500">Protein</label>
-                        <select id="pre-protein" class="w-full bg-zinc-900 border border-zinc-700 p-3 rounded-xl text-sm" onchange="saveCurrent()">
-                            <option value="On Target">On Target</option>
-                            <option value="Below Target">Below Target</option>
-                            <option value="Above Target">Above Target</option>
-                        </select>
+                        <label class="block text-[10px] font-bold uppercase text-zinc-500 text-center">Right Knee Pain</label>
+                        <div class="flex space-x-2">
+                            <button onclick="setKnee(false)" id="k-no" class="flex-1 btn-choice active-green">NO</button>
+                            <button onclick="setKnee(true)" id="k-yes" class="flex-1 btn-choice">YES</button>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold uppercase text-zinc-500 text-center">Iso-FUJI Dose</label>
+                        <div class="flex items-center justify-center space-x-4 bg-zinc-900 rounded-xl p-2 h-[54px] border border-zinc-800">
+                            <button onclick="adjFuji(-1)" class="text-blue-500 font-bold text-xl px-2">-</button>
+                            <span id="fuji-count" class="font-black text-lg">1</span>
+                            <button onclick="adjFuji(1)" class="text-blue-500 font-bold text-xl px-2">+</button>
+                        </div>
                     </div>
                 </div>
+
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase text-zinc-500">Safety Cues & Recovery</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="toggleLexicon('cue', '90-degree Limit')" class="btn-lexicon">90-deg Limit</button>
+                        <button onclick="toggleLexicon('cue', 'Top-down contact')" class="btn-lexicon">Top-down</button>
+                        <button onclick="toggleLexicon('cue', 'V-to-W Slide')" class="btn-lexicon">V-to-W Slide</button>
+                        <button onclick="toggleLexicon('cue', 'Magnesium')" class="btn-lexicon">Magnesium</button>
+                    </div>
+                </div>
+
+                <textarea id="notes" placeholder="NOTES: (e.g., No bronchial interference...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-900" rows="3" oninput="save()"></textarea>
             </div>
         </section>
 
-        <!-- PHASE 2: THE WORKOUT -->
-        <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-widest pl-1">II. The Workout</h2>
-            <div id="workout-content" class="space-y-8">
-                <!-- Injected via JS -->
-            </div>
-        </section>
-
-        <!-- PHASE 3: POST-WORKOUT -->
-        <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-widest pl-1">III. Post-Workout Report</h2>
-            <div class="card rounded-2xl p-5 space-y-6">
-                <div>
-                    <label class="block text-xs font-bold mb-3 uppercase text-zinc-500 text-center">Right Knee Pain?</label>
-                    <div class="flex space-x-2">
-                        <button onclick="setKneePain(false)" id="knee-no" class="btn-choice flex-1 selected-no">NO</button>
-                        <button onclick="setKneePain(true)" id="knee-yes" class="btn-choice flex-1">YES</button>
-                    </div>
-                    <div id="knee-notes-container" class="hidden mt-4">
-                        <textarea id="knee-notes" placeholder="Describe pain/clicking..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-red-600" rows="2" oninput="saveCurrent()"></textarea>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-2 uppercase text-zinc-500">Session Comments</label>
-                    <textarea id="session-comments" placeholder="Optional notes about training quality..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none" rows="3" oninput="saveCurrent()"></textarea>
-                </div>
-            </div>
-        </section>
-
-        <button onclick="completeSession()" class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-900/20 uppercase tracking-widest text-lg">
-            Complete Session
+        <button onclick="logSession()" class="w-full py-5 bg-blue-600 text-white font-black rounded-3xl shadow-2xl shadow-blue-900/40 uppercase tracking-widest text-lg active:scale-95 transition-transform">
+            Log Session
         </button>
     </main>
 
     <!-- HISTORY VIEW -->
     <main id="view-history" class="hidden space-y-6">
         <div class="flex justify-between items-center">
-            <h2 class="text-xl font-bold italic">LOCAL LOGS</h2>
-            <button onclick="clearHistory()" class="text-xs text-red-500 font-bold uppercase">Clear History</button>
+            <h2 class="text-xl font-black italic">MEMORY LOCKER</h2>
+            <button onclick="clearHistory()" class="text-[10px] text-red-500 font-bold uppercase">Clear All</button>
         </div>
         <div id="history-container" class="space-y-4"></div>
-        <button onclick="copyHistory()" class="w-full py-4 bg-zinc-100 text-black font-black rounded-2xl uppercase text-sm">
-            Copy XML Log for Sheets
+        <button onclick="copyHistory()" class="w-full py-4 bg-zinc-100 text-black font-black rounded-2xl uppercase text-xs">
+            Copy Lexicon Logs
         </button>
     </main>
 
-    <!-- Auto-save notification -->
-    <div class="fixed bottom-0 left-0 right-0 p-4 bg-black/90 backdrop-blur-lg border-t border-zinc-900 md:max-w-lg md:mx-auto text-center">
-        <span id="save-indicator" class="text-[10px] font-mono text-zinc-600 italic uppercase">Auto-saved to local memory</span>
-    </div>
-
     <script>
-        // Routine Definitions for Week 2
         const routines = {
-            A: { // Sun, Tue, Thu
-                id: "A", title: "Strength & Alignment",
-                structure: "circuit",
-                rounds: 3,
-                exercises: [{name:"Scapular Pull-ups", target:"10r"}, {name:"Hollow Body Holds", target:"30-45s"}, {name:"Banded Leg Align", target:"15r"}]
+            'STRENGTH & ALIGNMENT': { 
+                days: [0, 2, 4], // Sun, Tue, Thu
+                focus: 'STERNAL INTEGRITY',
+                exercises: [
+                    { name: "Scapular Pull-ups", sub: "(Naked/Slings)", target: "10r" },
+                    { name: "Hollow Body", sub: "Hold", target: "45s" },
+                    { name: "Banded Leg Alignment", sub: "", target: "15r" }
+                ],
+                rounds: 3
             },
-            B: { // Mon, Wed
-                id: "B", title: "Mobility & Skills",
-                structure: "special",
-                groups: [
-                    { name: "Initial Work", exercises: [{name:"Ankle Wall Drives", target:"15 reps"}], rounds: 3 },
-                    { name: "Skill Supersets", exercises: [{name:"Planche Leans", target:"30s"}, {name:"90/90 Hip Openers", target:"30s"}], rounds: 5 }
-                ]
+            'MOBILITY & SKILLS': {
+                days: [1, 3], // Mon, Wed
+                focus: 'PELVIC NEUTRALITY',
+                structure: 'special'
             },
-            C: { // Fri, Sat
-                id: "C", title: "Active Recovery & Rest",
-                structure: "rest",
-                rounds: 0, exercises: []
+            'REST / RECOVERY': {
+                days: [5, 6], // Fri, Sat
+                focus: 'KNEE SANCTUARY',
+                structure: 'rest'
             }
         };
 
-        let currentMode = 'A';
+        let currentType = '';
+        let activeVibes = [];
+        let activeFocus = [];
+        let activeCues = [];
         let hasKneePain = false;
+        let fujiDose = 1;
 
         function init() {
             const day = new Date().getDay();
-            // Determine Routine
-            if ([0, 2, 4].includes(day)) currentMode = 'A';
-            else if ([1, 3].includes(day)) currentMode = 'B';
-            else currentMode = 'C';
+            for (let k in routines) {
+                if (routines[k].days.includes(day)) {
+                    currentType = k;
+                    break;
+                }
+            }
 
+            document.getElementById('routine-display').innerText = currentType;
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-            document.getElementById('routine-title').innerText = routines[currentMode].title;
             
             renderWorkout();
-            loadCurrent();
-            updateHistoryView();
+            load();
         }
 
         function renderWorkout() {
             const container = document.getElementById('workout-content');
-            const data = routines[currentMode];
+            const data = routines[currentType];
             let html = "";
 
             if (data.structure === 'rest') {
-                html = `<div class="card p-5 rounded-2xl text-center italic text-zinc-500">Planned rest or active recovery day. Add comments in the post-workout section.</div>`;
-            } else if (data.structure === 'circuit') {
+                html = `<div class="card p-6 rounded-2xl text-center italic text-zinc-500 text-sm">Active Recovery / Rest Day. Focus on systemic recovery.</div>`;
+            } else if (data.structure === 'special') {
+                html = `
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Block 1: Initial</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
+                        ${[1,2,3].map(r => renderEx({name:"Ankle Wall Drives", sub:"", target:"15r"}, r)).join('')}
+                        <div class="flex items-center space-x-2 mt-6"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Block 2: Supersets</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
+                        ${[1,2,3,4,5].map(r => `
+                            ${renderEx({name:"Planche Leans", sub:"", target:"30s"}, r)}
+                            ${renderEx({name:"90/90 Hip Openers", sub:"", target:"30s"}, r)}
+                        `).join('')}
+                    </div>`;
+            } else {
                 for (let r = 1; r <= data.rounds; r++) {
                     html += `<div class="space-y-4">
-                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-zinc-700 uppercase">Circuit Round ${r}</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
-                        ${data.exercises.map(ex => renderExCard(ex, r)).join('')}
+                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Circuit Round ${r}</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
+                        ${data.exercises.map(ex => renderEx(ex, r)).join('')}
                     </div>`;
                 }
-            } else if (data.structure === 'special') {
-                data.groups.forEach(group => {
-                    html += `<div class="space-y-4">
-                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-blue-900 uppercase">${group.name}</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
-                        ${Array.from({length: group.rounds}).map((_, r) => 
-                            group.exercises.map(ex => renderExCard(ex, r+1, group.name)).join('')
-                        ).join('')}
-                    </div>`;
-                });
             }
             container.innerHTML = html;
         }
 
-        function renderExCard(ex, round, groupName = '') {
-            const id = `${groupName}-${round}-${ex.name}`;
+        function renderEx(ex, r) {
+            const id = `${r}-${ex.name}`;
             return `<div class="card rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                     <div>
-                        <h3 class="text-md font-bold text-zinc-200">${ex.name}</h3>
-                        <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">${ex.target}</p>
+                        <h3 class="text-sm font-bold text-zinc-200">${ex.name} <span class="text-[10px] text-zinc-600 font-normal">${ex.sub}</span></h3>
+                        <p class="text-[10px] text-zinc-500 font-bold uppercase">${ex.target}</p>
                     </div>
-                    <input type="checkbox" class="round-check w-8 h-8 rounded-xl bg-zinc-900 border-zinc-700 accent-blue-600" data-id="${id}" onchange="saveCurrent()">
+                    <input type="checkbox" class="round-check w-8 h-8 rounded-xl bg-zinc-900 border-zinc-800 accent-blue-600" data-id="${id}" onchange="save()">
                 </div>
-                <input type="text" placeholder="Set notes..." class="round-note w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-400 focus:outline-none" data-id="n-${id}" oninput="saveCurrent()">
+                <input type="text" placeholder="Notes..." class="round-note w-full bg-zinc-950 border border-zinc-900 rounded-xl p-2 text-xs text-zinc-400 focus:outline-none" data-id="n-${id}" oninput="save()">
             </div>`;
         }
 
-        function setKneePain(val) {
+        function toggleLexicon(type, val) {
+            let list = type === 'vibe' ? activeVibes : type === 'focus' ? activeFocus : activeCues;
+            const idx = list.indexOf(val);
+            if (idx > -1) list.splice(idx, 1); else list.push(val);
+            
+            // UI Update
+            const containerId = type === 'vibe' ? 'vibe-container' : type === 'focus' ? 'focus-container' : 'view-active';
+            document.querySelectorAll(`.btn-lexicon`).forEach(btn => {
+                if (btn.innerText === val || (btn.innerText === '90-deg Limit' && val === '90-degree Limit')) {
+                    btn.classList.toggle('active');
+                }
+            });
+            save();
+        }
+
+        function setKnee(val) {
             hasKneePain = val;
-            document.getElementById('knee-yes').className = val ? 'btn-choice flex-1 selected-yes' : 'btn-choice flex-1';
-            document.getElementById('knee-no').className = !val ? 'btn-choice flex-1 selected-no' : 'btn-choice flex-1';
+            document.getElementById('k-yes').className = val ? 'flex-1 btn-choice active-red' : 'flex-1 btn-choice';
+            document.getElementById('k-no').className = !val ? 'flex-1 btn-choice active-green' : 'flex-1 btn-choice';
             document.getElementById('knee-notes-container').style.display = val ? 'block' : 'none';
-            saveCurrent();
+            save();
         }
 
-        function switchTab(tab) {
-            document.getElementById('view-active').style.display = tab === 'active' ? 'block' : 'none';
-            document.getElementById('view-history').style.display = tab === 'history' ? 'block' : 'none';
-            document.getElementById('tab-active').className = tab === 'active' ? 'flex-1 py-3 text-sm font-bold uppercase tracking-wider tab-active' : 'flex-1 py-3 text-sm font-bold uppercase tracking-wider text-zinc-500';
-            document.getElementById('tab-history').className = tab === 'history' ? 'flex-1 py-3 text-sm font-bold uppercase tracking-wider tab-active' : 'flex-1 py-3 text-sm font-bold uppercase tracking-wider text-zinc-500';
-            if (tab === 'history') updateHistoryView();
+        function adjFuji(amt) {
+            fujiDose = Math.max(0, fujiDose + amt);
+            document.getElementById('fuji-count').innerText = fujiDose;
+            save();
         }
 
-        function saveCurrent() {
+        function save() {
             const state = {
                 mg: document.getElementById('mg-fatigue').value,
-                ready: document.getElementById('readiness').value,
-                hydration: document.getElementById('pre-hydration').value,
-                protein: document.getElementById('pre-protein').value,
+                rd: document.getElementById('readiness').value,
+                hyd: document.getElementById('pre-hydration').value,
+                pro: document.getElementById('pre-protein').value,
                 knee: hasKneePain,
-                kneeNotes: document.getElementById('knee-notes').value,
-                comments: document.getElementById('session-comments').value,
+                kneeN: document.getElementById('knee-notes')?.value || "",
+                fuji: fujiDose,
+                vibes: activeVibes,
+                focus: activeFocus,
+                cues: activeCues,
+                notes: document.getElementById('notes').value,
                 checks: {},
-                notes: {}
+                exNotes: {}
             };
             document.querySelectorAll('.round-check').forEach(c => state.checks[c.dataset.id] = c.checked);
-            document.querySelectorAll('.round-note').forEach(n => state.notes[n.dataset.id] = n.value);
-            localStorage.setItem('sprint1_w2_state', JSON.stringify(state));
+            document.querySelectorAll('.round-note').forEach(n => state.exNotes[n.dataset.id] = n.value);
+            localStorage.setItem('lexicon_state_v1', JSON.stringify(state));
         }
 
-        function loadCurrent() {
-            const saved = localStorage.getItem('sprint1_w2_state');
-            if (!saved) { setKneePain(false); return; }
-            const state = JSON.parse(saved);
-            
-            document.getElementById('mg-fatigue').value = state.mg;
-            document.getElementById('readiness').value = state.ready;
-            document.getElementById('pre-hydration').value = state.hydration || "On Target";
-            document.getElementById('pre-protein').value = state.protein || "On Target";
-            setKneePain(state.knee);
-            document.getElementById('knee-notes').value = state.kneeNotes || "";
-            document.getElementById('session-comments').value = state.comments || "";
-            
-            document.querySelectorAll('.round-check').forEach(c => c.checked = state.checks[c.dataset.id] || false);
-            document.querySelectorAll('.round-note').forEach(n => n.value = state.notes[n.dataset.id] || "");
+        function load() {
+            const saved = localStorage.getItem('lexicon_state_v1');
+            if (!saved) { setKnee(false); return; }
+            const s = JSON.parse(saved);
+            document.getElementById('mg-fatigue').value = s.mg;
+            document.getElementById('readiness').value = s.rd;
+            document.getElementById('pre-hydration').value = s.hyd;
+            document.getElementById('pre-protein').value = s.pro;
+            setKnee(s.knee);
+            fujiDose = s.fuji;
+            document.getElementById('fuji-count').innerText = fujiDose;
+            document.getElementById('notes').value = s.notes || "";
+            activeVibes = s.vibes || [];
+            activeFocus = s.focus || [];
+            activeCues = s.cues || [];
+
+            // Reset Lexicon Button Classes
+            document.querySelectorAll('.btn-lexicon').forEach(btn => {
+                const txt = btn.innerText === '90-deg Limit' ? '90-degree Limit' : btn.innerText;
+                if (activeVibes.includes(txt) || activeFocus.includes(txt) || activeCues.includes(txt)) btn.classList.add('active');
+            });
+
+            document.querySelectorAll('.round-check').forEach(c => c.checked = s.checks[c.dataset.id] || false);
+            document.querySelectorAll('.round-note').forEach(n => n.value = s.exNotes[n.dataset.id] || "");
         }
 
-        function completeSession() {
-            const now = new Date();
-            const timestamp = now.toISOString();
-            const mg = document.getElementById('mg-fatigue').value;
-            const ready = document.getElementById('readiness').value;
-            const hydration = document.getElementById('pre-hydration').value;
-            const protein = document.getElementById('pre-protein').value;
-            const knee = hasKneePain ? `YES: ${document.getElementById('knee-notes').value}` : "NO";
-            const sessionComments = document.getElementById('session-comments').value;
-            
-            let workoutDetails = [];
+        function logSession() {
+            const stamp = new Date().toISOString();
+            const metrics = [];
             document.querySelectorAll('.round-check').forEach(c => {
                 if (c.checked) {
                     const note = document.querySelector(`[data-id="n-${c.dataset.id}"]`).value;
-                    workoutDetails.push(`${c.dataset.id}${note ? ' (' + note + ')' : ''}`);
+                    metrics.push(`${c.dataset.id.split('-')[1]}: ${note || '1 set'}`);
                 }
             });
 
-            const logEntry = `<WORKOUT_LOG>
-[TIMESTAMP]: ${timestamp}
-[PRE-WORKOUT_REPORT]: Fatigue: ${mg}, Readiness: ${ready}, Hydration: ${hydration}, Protein: ${protein}
-[WORKOUT_REPORT]: Routine: ${routines[currentMode].title}, Exercises: ${workoutDetails.join(' | ') || 'None'}
-[POST-WORKOUT_REPORT]: Knee Pain: ${knee}, Comments: ${sessionComments || 'None'}
+            const output = `<WORKOUT_LOG>
+[TIMESTAMP]: ${stamp}
+[TYPE]: ${currentType}
+[FOCUS]: ${activeFocus.join(', ') || 'NONE'}
+[METRICS]: ${metrics.join('. ')}. Iso-FUJI: ${fujiDose} dose. Hydration: ${document.getElementById('pre-hydration').value}. Protein: ${document.getElementById('pre-protein').value}. ${activeCues.join(', ')}
+[VIBE]: ${activeVibes.join(', ') || 'NEUTRAL'}
+NOTES: ${document.getElementById('notes').value || 'None'}. Knee Pain: ${hasKneePain ? 'YES' : 'NO'}.
 </WORKOUT_LOG>`;
 
-            const history = JSON.parse(localStorage.getItem('workout_history_v2') || "[]");
-            history.unshift(logEntry);
-            localStorage.setItem('workout_history_v2', JSON.stringify(history));
-
-            localStorage.removeItem('sprint1_w2_state');
-            alert("Workout logged using XML format.");
+            const history = JSON.parse(localStorage.getItem('lex_history') || "[]");
+            history.unshift(output);
+            localStorage.setItem('lex_history', JSON.stringify(history));
+            localStorage.removeItem('lexicon_state_v1');
+            alert("Session Locked to Memory.");
             location.reload();
         }
 
-        function updateHistoryView() {
-            const history = JSON.parse(localStorage.getItem('workout_history_v2') || "[]");
+        function switchTab(t) {
+            document.getElementById('view-active').style.display = t === 'active' ? 'block' : 'none';
+            document.getElementById('view-history').style.display = t === 'history' ? 'block' : 'none';
+            document.getElementById('tab-active').className = t === 'active' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-zinc-500';
+            document.getElementById('tab-history').className = t === 'history' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-zinc-500';
+            if (t === 'history') updateHistory();
+        }
+
+        function updateHistory() {
+            const h = JSON.parse(localStorage.getItem('lex_history') || "[]");
             const container = document.getElementById('history-container');
-            if (history.length === 0) {
-                container.innerHTML = `<p class="text-zinc-600 text-sm italic text-center py-10">No history found.</p>`;
-                return;
-            }
-            container.innerHTML = history.map(log => `
+            container.innerHTML = h.map(log => `
                 <div class="card p-4 rounded-2xl text-[10px] font-mono whitespace-pre-wrap leading-relaxed text-zinc-400">
                     ${log.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                 </div>
@@ -321,24 +382,18 @@
         }
 
         function copyHistory() {
-            const history = JSON.parse(localStorage.getItem('workout_history_v2') || "[]");
-            if (history.length === 0) return;
-            const textToCopy = history.join('\n\n');
+            const h = JSON.parse(localStorage.getItem('lex_history') || "[]");
+            if (h.length === 0) return;
             const el = document.createElement('textarea');
-            el.value = textToCopy;
+            el.value = h.join('\n\n');
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert("All XML logs copied to clipboard.");
+            alert("Copied all logs.");
         }
 
-        function clearHistory() {
-            if (confirm("Delete all Week 2 history?")) {
-                localStorage.setItem('workout_history_v2', "[]");
-                updateHistoryView();
-            }
-        }
+        function clearHistory() { if (confirm("Clear all logs?")) { localStorage.setItem('lex_history', "[]"); updateHistory(); } }
 
         init();
     </script>
