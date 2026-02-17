@@ -2,400 +2,350 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2026 Lexicon Logger</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David's Sprint 1 Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        html { font-size: 18px; } 
-        body {
-            background-color: #000000; color: #ffffff;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .card { background: #111; border: 1px solid #222; }
-        .slider {
-            -webkit-appearance: none; width: 100%; height: 8px;
-            border-radius: 5px; background: #333; outline: none;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 32px; height: 32px;
-            border-radius: 50%; background: #3b82f6; cursor: pointer;
-        }
-        .btn-lexicon {
-            padding: 10px; border-radius: 12px; background: #1a1a1a;
-            border: 1px solid #333; font-weight: bold; font-size: 0.75rem;
-            text-align: center; color: #71717a; transition: all 0.2s ease;
-        }
-        .btn-lexicon.active { background: #3b82f6; border-color: #3b82f6; color: white; }
-        .btn-choice {
-            padding: 14px; border-radius: 14px; background: #1a1a1a;
-            border: 1px solid #333; font-weight: bold; font-size: 0.85rem;
-        }
-        .btn-choice.active-green { background: #22c55e; color: white; border-color: #22c55e; }
-        .btn-choice.active-red { background: #ef4444; color: white; border-color: #ef4444; }
-        
-        .tab-active { color: #3b82f6; border-bottom: 3px solid #3b82f6; }
-        ::-webkit-scrollbar { display: none; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .tab-active { border-bottom: 2px solid #38bdf8; color: #38bdf8; }
+        .card { background-color: #1e293b; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #334155; }
+        .btn-toggle { padding: 0.5rem 1rem; border-radius: 0.5rem; background: #334155; transition: all 0.2s; }
+        .btn-toggle.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+        input, textarea, select { background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.375rem; padding: 0.5rem; width: 100%; }
+        label { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: #94a3b8; }
     </style>
 </head>
-<body class="p-4 pb-40 md:max-w-lg md:mx-auto">
+<body class="max-w-md mx-auto p-4 pb-24">
 
-    <header class="mb-4 flex justify-between items-start">
-        <div>
-            <h1 id="routine-display" class="text-2xl font-black text-blue-500 italic uppercase">Loading...</h1>
-            <p id="current-date" class="text-zinc-500 font-mono text-xs uppercase"></p>
+    <!-- Tab Navigation -->
+    <div class="flex justify-around mb-6 sticky top-0 bg-[#0f172a] py-4 z-10 border-b border-slate-800">
+        <button id="tab-session" class="pb-2 px-4 tab-active font-bold" onclick="switchTab('session')">SESSION</button>
+        <button id="tab-history" class="pb-2 px-4 text-slate-400 font-bold" onclick="switchTab('history')">HISTORY LOG</button>
+    </div>
+
+    <!-- SESSION TAB -->
+    <div id="content-session">
+        <h2 class="text-xl font-bold mb-4 text-sky-400" id="workout-title">Loading workout...</h2>
+
+        <!-- Section I: Pre-Workout -->
+        <div class="card">
+            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Pre-Workout Report</h3>
+            <div class="space-y-3">
+                <div>
+                    <label>Energy Level (1-10)</label>
+                    <input type="range" id="energy" min="1" max="10" value="7" class="accent-sky-500">
+                </div>
+                <div>
+                    <label>Sleep Quality</label>
+                    <div class="flex gap-2">
+                        <button class="btn-toggle active flex-1 text-xs" onclick="toggleBtn(this, 'sleep')">Restorative</button>
+                        <button class="btn-toggle flex-1 text-xs" onclick="toggleBtn(this, 'sleep')">Interrupted</button>
+                    </div>
+                </div>
+                <div>
+                    <label>Readiness Notes</label>
+                    <textarea id="pre-notes" rows="2" placeholder="Soreness, stiffness, etc."></textarea>
+                </div>
+            </div>
         </div>
-        <div id="save-status" class="text-[9px] font-bold text-zinc-700 bg-zinc-900 px-2 py-1 rounded">AUTO-SAVE: ON</div>
-    </header>
 
-    <nav class="flex border-b border-zinc-800 mb-6 sticky top-0 bg-black z-20">
-        <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 text-sm font-bold uppercase tracking-wider tab-active">Session</button>
-        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 text-sm font-bold uppercase tracking-wider text-zinc-500">History Log</button>
-    </nav>
-
-    <!-- ACTIVE SESSION VIEW -->
-    <main id="view-active" class="block space-y-10">
-        
-        <!-- I. PRE-WORKOUT REPORT -->
-        <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">I. [PRE-WORKOUT_REPORT]</h2>
-            <div class="card rounded-3xl p-6 space-y-8">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">MG Fatigue</label>
-                        <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue" oninput="save()">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">Readiness</label>
-                        <input type="range" min="1" max="5" value="5" class="slider" id="readiness" oninput="save()">
-                    </div>
+        <!-- Section II: Workout Report -->
+        <div class="card">
+            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Workout Report</h3>
+            
+            <!-- Global Warmup -->
+            <div class="mb-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <input type="checkbox" id="warmup-check" class="w-5 h-5 accent-sky-500">
+                    <label for="warmup-check" class="m-0 font-bold text-white">Warmup Completed</label>
                 </div>
-
-                <div class="space-y-4">
-                    <label class="block text-[10px] font-bold uppercase text-zinc-500">Nutrition Targets</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <select id="pre-hydration" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm" onchange="save()">
-                            <option value="On Target">Hydration: On Target</option>
-                            <option value="Below Target">Hydration: Below</option>
-                            <option value="Above Target">Hydration: Above</option>
-                        </select>
-                        <select id="pre-protein" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm" onchange="save()">
-                            <option value="130g Protein">130g Protein: On</option>
-                            <option value="Below 130g">130g Protein: Below</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <label class="block text-[10px] font-bold uppercase text-zinc-500">[VIBE] Lexicon</label>
-                    <div class="grid grid-cols-2 gap-2" id="vibe-container">
-                        <button onclick="toggleLexicon('vibe', 'LEAN & CLEAN')" class="btn-lexicon">LEAN & CLEAN</button>
-                        <button onclick="toggleLexicon('vibe', 'SILENT STERNUM')" class="btn-lexicon">SILENT STERNUM</button>
-                        <button onclick="toggleLexicon('vibe', 'FATIGUED')" class="btn-lexicon">FATIGUED</button>
-                        <button onclick="toggleLexicon('vibe', 'BRONCHIAL LOAD')" class="btn-lexicon">BRONCHIAL LOAD</button>
-                    </div>
-                </div>
+                <textarea id="warmup-notes" rows="1" placeholder="Warmup specific feedback..."></textarea>
             </div>
-        </section>
 
-        <!-- II. WORKOUT REPORT -->
-        <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">II. [WORKOUT_REPORT]</h2>
-            <div class="card rounded-3xl p-6 mb-4">
-                <label class="block text-[10px] font-bold uppercase text-zinc-500 mb-3">Primary [FOCUS]</label>
-                <div class="grid grid-cols-2 gap-2" id="focus-container">
-                    <button onclick="toggleLexicon('focus', 'STERNAL INTEGRITY')" class="btn-lexicon">STERNAL INTEGRITY</button>
-                    <button onclick="toggleLexicon('focus', 'SCAPULAR TRACKING')" class="btn-lexicon">SCAPULAR TRACKING</button>
-                    <button onclick="toggleLexicon('focus', 'KNEE SANCTUARY')" class="btn-lexicon">KNEE SANCTUARY</button>
-                    <button onclick="toggleLexicon('focus', 'RIB-KNIT')" class="btn-lexicon">RIB-KNIT</button>
-                </div>
+            <!-- Exercises Container -->
+            <div id="exercise-list" class="space-y-6">
+                <!-- Injected via JS -->
             </div>
-            <div id="workout-content" class="space-y-8"></div>
-        </section>
-
-        <!-- III. POST-WORKOUT REPORT -->
-        <section class="space-y-4">
-            <h2 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] pl-1">III. [POST-WORKOUT_REPORT]</h2>
-            <div class="card rounded-3xl p-6 space-y-8">
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-bold uppercase text-zinc-500 text-center">Right Knee Pain</label>
-                        <div class="flex space-x-2">
-                            <button onclick="setKnee(false)" id="k-no" class="flex-1 btn-choice active-green">NO</button>
-                            <button onclick="setKnee(true)" id="k-yes" class="flex-1 btn-choice">YES</button>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-bold uppercase text-zinc-500 text-center">Iso-FUJI Dose</label>
-                        <div class="flex items-center justify-center space-x-4 bg-zinc-900 rounded-xl p-2 h-[54px] border border-zinc-800">
-                            <button onclick="adjFuji(-1)" class="text-blue-500 font-bold text-xl px-2">-</button>
-                            <span id="fuji-count" class="font-black text-lg">1</span>
-                            <button onclick="adjFuji(1)" class="text-blue-500 font-bold text-xl px-2">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <label class="block text-[10px] font-bold uppercase text-zinc-500">Safety Cues & Recovery</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="toggleLexicon('cue', '90-degree Limit')" class="btn-lexicon">90-deg Limit</button>
-                        <button onclick="toggleLexicon('cue', 'Top-down contact')" class="btn-lexicon">Top-down</button>
-                        <button onclick="toggleLexicon('cue', 'V-to-W Slide')" class="btn-lexicon">V-to-W Slide</button>
-                        <button onclick="toggleLexicon('cue', 'Magnesium')" class="btn-lexicon">Magnesium</button>
-                    </div>
-                </div>
-
-                <textarea id="notes" placeholder="NOTES: (e.g., No bronchial interference...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-900" rows="3" oninput="save()"></textarea>
-            </div>
-        </section>
-
-        <button onclick="logSession()" class="w-full py-5 bg-blue-600 text-white font-black rounded-3xl shadow-2xl shadow-blue-900/40 uppercase tracking-widest text-lg active:scale-95 transition-transform">
-            Log Session
-        </button>
-    </main>
-
-    <!-- HISTORY VIEW -->
-    <main id="view-history" class="hidden space-y-6">
-        <div class="flex justify-between items-center">
-            <h2 class="text-xl font-black italic">MEMORY LOCKER</h2>
-            <button onclick="clearHistory()" class="text-[10px] text-red-500 font-bold uppercase">Clear All</button>
         </div>
-        <div id="history-container" class="space-y-4"></div>
-        <button onclick="copyHistory()" class="w-full py-4 bg-zinc-100 text-black font-black rounded-2xl uppercase text-xs">
-            Copy Lexicon Logs
+
+        <!-- Section III: Post-Workout -->
+        <div class="card">
+            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Post-Workout Report</h3>
+            
+            <!-- SSP Scale -->
+            <div class="space-y-4 mb-4">
+                <p class="text-xs font-bold text-sky-400 uppercase tracking-wider">Knee Metrics (S.S.P. Scale)</p>
+                
+                <div>
+                    <label>Sound (S)</label>
+                    <div class="grid grid-cols-4 gap-1" id="ssp-sound">
+                        <button class="btn-toggle text-[10px] p-1 active" onclick="setSSP('sound', 'Silent')">Silent</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Pop')">Pop</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Click')">Click</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Grit')">Grit</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Sensation (S)</label>
+                    <div class="grid grid-cols-4 gap-1" id="ssp-sensation">
+                        <button class="btn-toggle text-[10px] p-1 active" onclick="setSSP('sensation', 'Smooth')">Smooth</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Slip')">Slip</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Tight')">Tight</button>
+                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Unstable')">Unstable</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Pain Level (P: 0-10)</label>
+                    <input type="range" id="ssp-pain" min="0" max="10" value="0" class="accent-red-500">
+                    <div class="flex justify-between text-[10px] text-slate-500 px-1">
+                        <span>0 (None)</span><span>10 (Severe)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label>Safety Cues & Recovery</label>
+                    <div class="flex gap-2">
+                        <button class="btn-toggle active flex-1 text-xs" onclick="toggleBtn(this, 'safety')">Stable</button>
+                        <button class="btn-toggle flex-1 text-xs" onclick="toggleBtn(this, 'safety')">Aggravated</button>
+                    </div>
+                </div>
+                <div>
+                    <label>Session Notes</label>
+                    <textarea id="post-notes" rows="3" placeholder="Overall feel, technical breakthroughs..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="generateLog()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-4 rounded-xl shadow-lg transition-colors">
+            FINISH & GENERATE LOG
         </button>
-    </main>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="content-history" class="hidden">
+        <h2 class="text-xl font-bold mb-4">Saved Logs</h2>
+        <div id="history-container" class="space-y-4 text-sm">
+            <!-- Logs go here -->
+        </div>
+    </div>
+
+    <!-- Modal for Log Output -->
+    <div id="log-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-sm p-6 rounded-2xl shadow-2xl">
+            <h3 class="text-lg font-bold mb-4">Workout Log Generated</h3>
+            <textarea id="log-output" class="w-full h-64 text-xs font-mono mb-4 bg-black p-3" readonly></textarea>
+            <div class="flex gap-3">
+                <button onclick="copyLog()" class="flex-1 bg-sky-600 py-2 rounded-lg font-bold">Copy Text</button>
+                <button onclick="closeModal()" class="flex-1 bg-slate-700 py-2 rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        const routines = {
-            'STRENGTH & ALIGNMENT': { 
-                days: [0, 2, 4], // Sun, Tue, Thu
-                focus: 'STERNAL INTEGRITY',
-                exercises: [
-                    { name: "Scapular Pull-ups", sub: "(Naked/Slings)", target: "10r" },
-                    { name: "Hollow Body", sub: "Hold", target: "45s" },
-                    { name: "Banded Leg Alignment", sub: "", target: "15r" }
-                ],
-                rounds: 3
-            },
-            'MOBILITY & SKILLS': {
-                days: [1, 3], // Mon, Wed
-                focus: 'PELVIC NEUTRALITY',
-                structure: 'special'
-            },
-            'REST / RECOVERY': {
-                days: [5, 6], // Fri, Sat
-                focus: 'KNEE SANCTUARY',
-                structure: 'rest'
-            }
+        const sprintBaseline = {
+            'Tue': { name: 'Strength & Alignment', exercises: [
+                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
+                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
+                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
+            ]},
+            'Thu': { name: 'Strength & Alignment', exercises: [
+                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
+                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
+                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
+            ]},
+            'Sun': { name: 'Strength & Alignment', exercises: [
+                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
+                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
+                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
+            ]},
+            'Mon': { name: 'Mobility & Skills', exercises: [
+                { name: 'Ankle Wall Drives', circuits: 3, cues: 'No band, 5.5" cap, dynamic range' },
+                { name: 'Planche Leans', circuits: 3, cues: 'Protraction focus, lean forward, straight arms' },
+                { name: '90/90 Hip Openers', circuits: 3, cues: 'Back upright, rotate internal/external' }
+            ]},
+            'Wed': { name: 'Mobility & Skills', exercises: [
+                { name: 'Ankle Wall Drives', circuits: 3, cues: 'No band, 5.5" cap, dynamic range' },
+                { name: 'Planche Leans', circuits: 3, cues: 'Protraction focus, lean forward, straight arms' },
+                { name: '90/90 Hip Openers', circuits: 3, cues: 'Back upright, rotate internal/external' }
+            ]},
+            'Fri': { name: 'Active Recovery & Rest', exercises: [] },
+            'Sat': { name: 'Active Recovery & Rest', exercises: [] }
         };
 
-        let currentType = '';
-        let activeVibes = [];
-        let activeFocus = [];
-        let activeCues = [];
-        let hasKneePain = false;
-        let fujiDose = 1;
+        let currentWorkout = null;
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = days[new Date().getDay()];
 
-        function init() {
-            const day = new Date().getDay();
-            for (let k in routines) {
-                if (routines[k].days.includes(day)) {
-                    currentType = k;
-                    break;
-                }
+        window.onload = () => {
+            loadWorkout(today);
+            loadHistory();
+        };
+
+        function loadWorkout(day) {
+            currentWorkout = sprintBaseline[day];
+            document.getElementById('workout-title').innerText = `${day}: ${currentWorkout.name}`;
+            
+            const container = document.getElementById('exercise-list');
+            container.innerHTML = '';
+
+            if (currentWorkout.exercises.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 italic">No structured baseline for today. Focused on active recovery and systemic calm.</p>`;
+                return;
             }
 
-            document.getElementById('routine-display').innerText = currentType;
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            currentWorkout.exercises.forEach((ex, exIdx) => {
+                const exCard = document.createElement('div');
+                exCard.className = 'border-l-4 border-sky-800 pl-4 py-2';
+                
+                let circuitsHTML = '';
+                for(let i=1; i<=ex.circuits; i++) {
+                    circuitsHTML += `
+                        <div class="mt-2 grid grid-cols-1 gap-1">
+                            <label class="text-[10px] text-sky-400">Round ${i} Notes (Reps/Range)</label>
+                            <input type="text" id="ex-${exIdx}-r${i}" placeholder="e.g. 12 reps, 5s hold" class="text-xs py-1">
+                        </div>
+                    `;
+                }
+
+                exCard.innerHTML = `
+                    <h4 class="font-bold text-white text-md">${ex.name}</h4>
+                    <p class="text-[10px] text-slate-500 mb-2 italic">${ex.cues}</p>
+                    ${circuitsHTML}
+                `;
+                container.appendChild(exCard);
+            });
+        }
+
+        function switchTab(tab) {
+            document.getElementById('content-session').classList.toggle('hidden', tab !== 'session');
+            document.getElementById('content-history').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('tab-session').classList.toggle('tab-active', tab === 'session');
+            document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
+            if(tab === 'session') document.getElementById('tab-history').classList.add('text-slate-400');
+            else document.getElementById('tab-history').classList.remove('text-slate-400');
+        }
+
+        function toggleBtn(btn, group) {
+            const btns = btn.parentElement.querySelectorAll('.btn-toggle');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function setSSP(category, value) {
+            const parent = document.getElementById(`ssp-${category}`);
+            parent.querySelectorAll('.btn-toggle').forEach(b => {
+                b.classList.toggle('active', b.innerText === value);
+            });
+        }
+
+        function getActive(id) {
+            const container = typeof id === 'string' ? document.getElementById(id) : id;
+            const active = container.querySelector('.active');
+            return active ? active.innerText : 'N/A';
+        }
+
+        function generateLog() {
+            const energy = document.getElementById('energy').value;
+            const sleep = getActive(document.querySelectorAll('.btn-toggle')[0].parentElement);
+            const preNotes = document.getElementById('pre-notes').value;
             
-            renderWorkout();
-            load();
-        }
+            const warmupDone = document.getElementById('warmup-check').checked ? "YES" : "NO";
+            const warmupNotes = document.getElementById('warmup-notes').value;
 
-        function renderWorkout() {
-            const container = document.getElementById('workout-content');
-            const data = routines[currentType];
-            let html = "";
+            const sSound = getActive('ssp-sound');
+            const sSensation = getActive('ssp-sensation');
+            const sPain = document.getElementById('ssp-pain').value;
 
-            if (data.structure === 'rest') {
-                html = `<div class="card p-6 rounded-2xl text-center italic text-zinc-500 text-sm">Active Recovery / Rest Day. Focus on systemic recovery.</div>`;
-            } else if (data.structure === 'special') {
-                html = `
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Block 1: Initial</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
-                        ${[1,2,3].map(r => renderEx({name:"Ankle Wall Drives", sub:"", target:"15r"}, r)).join('')}
-                        <div class="flex items-center space-x-2 mt-6"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Block 2: Supersets</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
-                        ${[1,2,3,4,5].map(r => `
-                            ${renderEx({name:"Planche Leans", sub:"", target:"30s"}, r)}
-                            ${renderEx({name:"90/90 Hip Openers", sub:"", target:"30s"}, r)}
-                        `).join('')}
-                    </div>`;
-            } else {
-                for (let r = 1; r <= data.rounds; r++) {
-                    html += `<div class="space-y-4">
-                        <div class="flex items-center space-x-2"><h2 class="text-[10px] font-black text-zinc-800 uppercase">Circuit Round ${r}</h2><span class="h-px flex-1 bg-zinc-900"></span></div>
-                        ${data.exercises.map(ex => renderEx(ex, r)).join('')}
-                    </div>`;
+            const safety = getActive(document.querySelectorAll('.btn-toggle')[document.querySelectorAll('.btn-toggle').length-2].parentElement);
+            const postNotes = document.getElementById('post-notes').value;
+
+            let exerciseLogs = '';
+            currentWorkout.exercises.forEach((ex, exIdx) => {
+                exerciseLogs += `\n[${ex.name.toUpperCase().replace(/\s/g, '_')}]: `;
+                let rounds = [];
+                for(let i=1; i<=ex.circuits; i++) {
+                    const val = document.getElementById(`ex-${exIdx}-r${i}`).value || "completed";
+                    rounds.push(`R${i}: ${val}`);
                 }
-            }
-            container.innerHTML = html;
-        }
-
-        function renderEx(ex, r) {
-            const id = `${r}-${ex.name}`;
-            return `<div class="card rounded-2xl p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <div>
-                        <h3 class="text-sm font-bold text-zinc-200">${ex.name} <span class="text-[10px] text-zinc-600 font-normal">${ex.sub}</span></h3>
-                        <p class="text-[10px] text-zinc-500 font-bold uppercase">${ex.target}</p>
-                    </div>
-                    <input type="checkbox" class="round-check w-8 h-8 rounded-xl bg-zinc-900 border-zinc-800 accent-blue-600" data-id="${id}" onchange="save()">
-                </div>
-                <input type="text" placeholder="Notes..." class="round-note w-full bg-zinc-950 border border-zinc-900 rounded-xl p-2 text-xs text-zinc-400 focus:outline-none" data-id="n-${id}" oninput="save()">
-            </div>`;
-        }
-
-        function toggleLexicon(type, val) {
-            let list = type === 'vibe' ? activeVibes : type === 'focus' ? activeFocus : activeCues;
-            const idx = list.indexOf(val);
-            if (idx > -1) list.splice(idx, 1); else list.push(val);
-            
-            // UI Update
-            const containerId = type === 'vibe' ? 'vibe-container' : type === 'focus' ? 'focus-container' : 'view-active';
-            document.querySelectorAll(`.btn-lexicon`).forEach(btn => {
-                if (btn.innerText === val || (btn.innerText === '90-deg Limit' && val === '90-degree Limit')) {
-                    btn.classList.toggle('active');
-                }
-            });
-            save();
-        }
-
-        function setKnee(val) {
-            hasKneePain = val;
-            document.getElementById('k-yes').className = val ? 'flex-1 btn-choice active-red' : 'flex-1 btn-choice';
-            document.getElementById('k-no').className = !val ? 'flex-1 btn-choice active-green' : 'flex-1 btn-choice';
-            document.getElementById('knee-notes-container').style.display = val ? 'block' : 'none';
-            save();
-        }
-
-        function adjFuji(amt) {
-            fujiDose = Math.max(0, fujiDose + amt);
-            document.getElementById('fuji-count').innerText = fujiDose;
-            save();
-        }
-
-        function save() {
-            const state = {
-                mg: document.getElementById('mg-fatigue').value,
-                rd: document.getElementById('readiness').value,
-                hyd: document.getElementById('pre-hydration').value,
-                pro: document.getElementById('pre-protein').value,
-                knee: hasKneePain,
-                kneeN: document.getElementById('knee-notes')?.value || "",
-                fuji: fujiDose,
-                vibes: activeVibes,
-                focus: activeFocus,
-                cues: activeCues,
-                notes: document.getElementById('notes').value,
-                checks: {},
-                exNotes: {}
-            };
-            document.querySelectorAll('.round-check').forEach(c => state.checks[c.dataset.id] = c.checked);
-            document.querySelectorAll('.round-note').forEach(n => state.exNotes[n.dataset.id] = n.value);
-            localStorage.setItem('lexicon_state_v1', JSON.stringify(state));
-        }
-
-        function load() {
-            const saved = localStorage.getItem('lexicon_state_v1');
-            if (!saved) { setKnee(false); return; }
-            const s = JSON.parse(saved);
-            document.getElementById('mg-fatigue').value = s.mg;
-            document.getElementById('readiness').value = s.rd;
-            document.getElementById('pre-hydration').value = s.hyd;
-            document.getElementById('pre-protein').value = s.pro;
-            setKnee(s.knee);
-            fujiDose = s.fuji;
-            document.getElementById('fuji-count').innerText = fujiDose;
-            document.getElementById('notes').value = s.notes || "";
-            activeVibes = s.vibes || [];
-            activeFocus = s.focus || [];
-            activeCues = s.cues || [];
-
-            // Reset Lexicon Button Classes
-            document.querySelectorAll('.btn-lexicon').forEach(btn => {
-                const txt = btn.innerText === '90-deg Limit' ? '90-degree Limit' : btn.innerText;
-                if (activeVibes.includes(txt) || activeFocus.includes(txt) || activeCues.includes(txt)) btn.classList.add('active');
+                exerciseLogs += rounds.join(' | ');
             });
 
-            document.querySelectorAll('.round-check').forEach(c => c.checked = s.checks[c.dataset.id] || false);
-            document.querySelectorAll('.round-note').forEach(n => n.value = s.exNotes[n.dataset.id] || "");
+            const timestamp = new Date().toLocaleString();
+            const log = `[DATE]: ${timestamp}
+[WORKOUT]: ${today} - ${currentWorkout.name.toUpperCase().replace(/\s/g, '_')}
+
+[PRE-WORKOUT_REPORT]
+Energy: ${energy}/10
+Sleep: ${sleep}
+Notes: ${preNotes || "None"}
+
+[WORKOUT_REPORT]
+Warmup_Completed: ${warmupDone}
+Warmup_Notes: ${warmupNotes || "None"}
+${exerciseLogs}
+
+[POST-WORKOUT_REPORT]
+Knee: [${sSound} / ${sSensation} / P:${sPain}]
+Safety_Cues: ${safety}
+Notes: ${postNotes || "None"}`;
+
+            document.getElementById('log-output').value = log;
+            document.getElementById('log-modal').classList.remove('hidden');
+            document.getElementById('log-modal').classList.add('flex');
+
+            saveToHistory(log);
         }
 
-        function logSession() {
-            const stamp = new Date().toISOString();
-            const metrics = [];
-            document.querySelectorAll('.round-check').forEach(c => {
-                if (c.checked) {
-                    const note = document.querySelector(`[data-id="n-${c.dataset.id}"]`).value;
-                    metrics.push(`${c.dataset.id.split('-')[1]}: ${note || '1 set'}`);
-                }
-            });
-
-            const output = `<WORKOUT_LOG>
-[TIMESTAMP]: ${stamp}
-[TYPE]: ${currentType}
-[FOCUS]: ${activeFocus.join(', ') || 'NONE'}
-[METRICS]: ${metrics.join('. ')}. Iso-FUJI: ${fujiDose} dose. Hydration: ${document.getElementById('pre-hydration').value}. Protein: ${document.getElementById('pre-protein').value}. ${activeCues.join(', ')}
-[VIBE]: ${activeVibes.join(', ') || 'NEUTRAL'}
-NOTES: ${document.getElementById('notes').value || 'None'}. Knee Pain: ${hasKneePain ? 'YES' : 'NO'}.
-</WORKOUT_LOG>`;
-
-            const history = JSON.parse(localStorage.getItem('lex_history') || "[]");
-            history.unshift(output);
-            localStorage.setItem('lex_history', JSON.stringify(history));
-            localStorage.removeItem('lexicon_state_v1');
-            alert("Session Locked to Memory.");
-            location.reload();
+        function saveToHistory(log) {
+            let history = JSON.parse(localStorage.getItem('workout_history') || '[]');
+            history.unshift({ date: new Date().toLocaleDateString(), log: log });
+            localStorage.setItem('workout_history', JSON.stringify(history));
+            loadHistory();
         }
 
-        function switchTab(t) {
-            document.getElementById('view-active').style.display = t === 'active' ? 'block' : 'none';
-            document.getElementById('view-history').style.display = t === 'history' ? 'block' : 'none';
-            document.getElementById('tab-active').className = t === 'active' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-zinc-500';
-            document.getElementById('tab-history').className = t === 'history' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-zinc-500';
-            if (t === 'history') updateHistory();
-        }
-
-        function updateHistory() {
-            const h = JSON.parse(localStorage.getItem('lex_history') || "[]");
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('workout_history') || '[]');
             const container = document.getElementById('history-container');
-            container.innerHTML = h.map(log => `
-                <div class="card p-4 rounded-2xl text-[10px] font-mono whitespace-pre-wrap leading-relaxed text-zinc-400">
-                    ${log.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                </div>
-            `).join('');
+            container.innerHTML = history.length ? '' : '<p class="text-slate-500 italic">No logs found yet.</p>';
+            
+            history.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'card text-xs';
+                div.innerHTML = `
+                    <div class="flex justify-between mb-2">
+                        <span class="font-bold text-sky-400">${item.date}</span>
+                        <button onclick="deleteLog(${idx})" class="text-red-500">Delete</button>
+                    </div>
+                    <pre class="bg-black/40 p-2 rounded overflow-x-auto whitespace-pre-wrap">${item.log}</pre>
+                `;
+                container.appendChild(div);
+            });
         }
 
-        function copyHistory() {
-            const h = JSON.parse(localStorage.getItem('lex_history') || "[]");
-            if (h.length === 0) return;
-            const el = document.createElement('textarea');
-            el.value = h.join('\n\n');
-            document.body.appendChild(el);
-            el.select();
+        function deleteLog(idx) {
+            let history = JSON.parse(localStorage.getItem('workout_history') || '[]');
+            history.splice(idx, 1);
+            localStorage.setItem('workout_history', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function copyLog() {
+            const textarea = document.getElementById('log-output');
+            textarea.select();
             document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("Copied all logs.");
+            const btn = event.target;
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = "Copy Text", 2000);
         }
 
-        function clearHistory() { if (confirm("Clear all logs?")) { localStorage.setItem('lex_history', "[]"); updateHistory(); } }
-
-        init();
+        function closeModal() {
+            document.getElementById('log-modal').classList.add('hidden');
+            document.getElementById('log-modal').classList.remove('flex');
+        }
     </script>
 </body>
 </html>
