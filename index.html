@@ -3,349 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>David's Sprint 1 Tracker</title>
+    <title>David's Sprint 2 - Integrity Logger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        body { background-color: #020617; color: #f8fafc; font-family: ui-sans-serif, system-ui, sans-serif; }
         .tab-active { border-bottom: 2px solid #38bdf8; color: #38bdf8; }
-        .card { background-color: #1e293b; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #334155; }
-        .btn-toggle { padding: 0.5rem 1rem; border-radius: 0.5rem; background: #334155; transition: all 0.2s; }
-        .btn-toggle.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
-        input, textarea, select { background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.375rem; padding: 0.5rem; width: 100%; }
-        label { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: #94a3b8; }
+        .card { background-color: #0f172a; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid #1e293b; }
+        .btn-toggle { padding: 0.5rem; border-radius: 0.5rem; background: #1e293b; font-size: 0.7rem; transition: all 0.2s; cursor: pointer; text-align: center; }
+        .btn-toggle.active { background: #38bdf8; color: #020617; font-weight: bold; }
+        input, textarea, select { background: #020617; border: 1px solid #1e293b; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
+        label { display: block; margin-bottom: 0.35rem; font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+        .ssp-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 0.25rem; }
+        .zero-input { text-align: center; font-weight: bold; color: #ef4444; }
     </style>
 </head>
-<body class="max-w-md mx-auto p-4 pb-24">
+<body class="max-w-md mx-auto p-4 pb-28">
 
-    <!-- Tab Navigation -->
-    <div class="flex justify-around mb-6 sticky top-0 bg-[#0f172a] py-4 z-10 border-b border-slate-800">
-        <button id="tab-session" class="pb-2 px-4 tab-active font-bold" onclick="switchTab('session')">SESSION</button>
-        <button id="tab-history" class="pb-2 px-4 text-slate-400 font-bold" onclick="switchTab('history')">HISTORY LOG</button>
-    </div>
-
-    <!-- SESSION TAB -->
-    <div id="content-session">
-        <h2 class="text-xl font-bold mb-4 text-sky-400" id="workout-title">Loading workout...</h2>
-
-        <!-- Section I: Pre-Workout -->
-        <div class="card">
-            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Pre-Workout Report</h3>
-            <div class="space-y-3">
-                <div>
-                    <label>Energy Level (1-10)</label>
-                    <input type="range" id="energy" min="1" max="10" value="7" class="accent-sky-500">
-                </div>
-                <div>
-                    <label>Sleep Quality</label>
-                    <div class="flex gap-2">
-                        <button class="btn-toggle active flex-1 text-xs" onclick="toggleBtn(this, 'sleep')">Restorative</button>
-                        <button class="btn-toggle flex-1 text-xs" onclick="toggleBtn(this, 'sleep')">Interrupted</button>
-                    </div>
-                </div>
-                <div>
-                    <label>Readiness Notes</label>
-                    <textarea id="pre-notes" rows="2" placeholder="Soreness, stiffness, etc."></textarea>
-                </div>
-            </div>
+    <header class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-xs font-black text-sky-500 tracking-widest uppercase">Sprint 2 Protocol</h1>
+            <h2 id="routine-title" class="text-xl font-bold">Loading...</h2>
         </div>
+        <div class="text-[10px] bg-slate-800 px-2 py-1 rounded font-mono" id="current-date"></div>
+    </header>
 
-        <!-- Section II: Workout Report -->
-        <div class="card">
-            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Workout Report</h3>
+    <nav class="flex border-b border-slate-800 mb-6 sticky top-0 bg-[#020617]/90 backdrop-blur-md z-20">
+        <button id="btn-session" class="flex-1 py-3 text-xs font-black tab-active" onclick="showTab('session')">SESSION</button>
+        <button id="btn-history" class="flex-1 py-3 text-xs font-black text-slate-500" onclick="showTab('history')">HISTORY LOG</button>
+    </nav>
+
+    <!-- SESSION VIEW -->
+    <main id="view-session">
+        
+        <!-- I. PRE-WORKOUT SSP -->
+        <section class="card border-l-4 border-l-sky-500">
+            <h3 class="text-xs font-black mb-4 flex items-center gap-2"><span class="w-2 h-2 bg-sky-500 rounded-full"></span> I. PRE-WORKOUT SSP AUDIT</h3>
+            <div id="pre-ssp-container" class="space-y-6">
+                <!-- Joint Audits (Knee, Elbow, Shoulder) Injected Here -->
+            </div>
+        </section>
+
+        <!-- II. WORKOUT REPORT -->
+        <section class="card">
+            <h3 class="text-xs font-black mb-4 flex items-center gap-2"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span> II. WORKOUT REPORT</h3>
             
-            <!-- Global Warmup -->
-            <div class="mb-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+            <div class="mb-6 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
                 <div class="flex items-center gap-3 mb-2">
-                    <input type="checkbox" id="warmup-check" class="w-5 h-5 accent-sky-500">
-                    <label for="warmup-check" class="m-0 font-bold text-white">Warmup Completed</label>
+                    <input type="checkbox" id="warmup-done" class="w-5 h-5 accent-emerald-500">
+                    <label for="warmup-done" class="m-0 text-white font-bold normal-case text-sm">Warmup Completed</label>
                 </div>
-                <textarea id="warmup-notes" rows="1" placeholder="Warmup specific feedback..."></textarea>
+                <textarea id="warmup-notes" rows="1" placeholder="Warmup notes..."></textarea>
             </div>
 
-            <!-- Exercises Container -->
-            <div id="exercise-list" class="space-y-6">
-                <!-- Injected via JS -->
+            <div id="exercise-list" class="space-y-8">
+                <!-- Exercises Injected Here -->
             </div>
-        </div>
+        </section>
 
-        <!-- Section III: Post-Workout -->
-        <div class="card">
-            <h3 class="font-bold mb-3 border-b border-slate-700 pb-1">Post-Workout Report</h3>
+        <!-- III. POST-WORKOUT REPORT -->
+        <section class="card border-l-4 border-l-rose-500">
+            <h3 class="text-xs font-black mb-4 flex items-center gap-2"><span class="w-2 h-2 bg-rose-500 rounded-full"></span> III. POST-WORKOUT REPORT</h3>
             
-            <!-- SSP Scale -->
-            <div class="space-y-4 mb-4">
-                <p class="text-xs font-bold text-sky-400 uppercase tracking-wider">Knee Metrics (S.S.P. Scale)</p>
-                
-                <div>
-                    <label>Sound (S)</label>
-                    <div class="grid grid-cols-4 gap-1" id="ssp-sound">
-                        <button class="btn-toggle text-[10px] p-1 active" onclick="setSSP('sound', 'Silent')">Silent</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Pop')">Pop</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Click')">Click</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sound', 'Grit')">Grit</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label>Sensation (S)</label>
-                    <div class="grid grid-cols-4 gap-1" id="ssp-sensation">
-                        <button class="btn-toggle text-[10px] p-1 active" onclick="setSSP('sensation', 'Smooth')">Smooth</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Slip')">Slip</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Tight')">Tight</button>
-                        <button class="btn-toggle text-[10px] p-1" onclick="setSSP('sensation', 'Unstable')">Unstable</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label>Pain Level (P: 0-10)</label>
-                    <input type="range" id="ssp-pain" min="0" max="10" value="0" class="accent-red-500">
-                    <div class="flex justify-between text-[10px] text-slate-500 px-1">
-                        <span>0 (None)</span><span>10 (Severe)</span>
-                    </div>
+            <!-- MG Resource Gauge -->
+            <div class="mb-8">
+                <label class="text-sky-400">MG Status (The Shield)</label>
+                <input type="range" id="mg-shield" min="1" max="5" value="1" class="accent-sky-500 mt-2" oninput="updateShieldLabel(this.value)">
+                <div class="flex justify-between text-[10px] font-bold mt-1 uppercase">
+                    <span id="shield-text" class="text-emerald-400">1: Full Power</span>
+                    <span class="text-slate-500">5: Symptomatic</span>
                 </div>
             </div>
 
-            <div class="space-y-3">
-                <div>
-                    <label>Safety Cues & Recovery</label>
-                    <div class="flex gap-2">
-                        <button class="btn-toggle active flex-1 text-xs" onclick="toggleBtn(this, 'safety')">Stable</button>
-                        <button class="btn-toggle flex-1 text-xs" onclick="toggleBtn(this, 'safety')">Aggravated</button>
-                    </div>
-                </div>
-                <div>
-                    <label>Session Notes</label>
-                    <textarea id="post-notes" rows="3" placeholder="Overall feel, technical breakthroughs..."></textarea>
-                </div>
+            <div id="post-ssp-container" class="space-y-6 mb-8">
+                <!-- Joint Audits Injected Here -->
             </div>
-        </div>
 
-        <button onclick="generateLog()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-4 rounded-xl shadow-lg transition-colors">
-            FINISH & GENERATE LOG
+            <div>
+                <label>Session Notes (The Vibe)</label>
+                <textarea id="session-vibe" rows="3" placeholder="e.g. Lasagna energy high, Trap felt tight..."></textarea>
+            </div>
+        </section>
+
+        <button onclick="submitSession()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-900/20 uppercase tracking-widest text-sm transition-all active:scale-95">
+            Lock Session Memory
         </button>
-    </div>
+    </main>
 
-    <!-- HISTORY TAB -->
-    <div id="content-history" class="hidden">
-        <h2 class="text-xl font-bold mb-4">Saved Logs</h2>
-        <div id="history-container" class="space-y-4 text-sm">
-            <!-- Logs go here -->
-        </div>
-    </div>
-
-    <!-- Modal for Log Output -->
-    <div id="log-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-slate-700 w-full max-w-sm p-6 rounded-2xl shadow-2xl">
-            <h3 class="text-lg font-bold mb-4">Workout Log Generated</h3>
-            <textarea id="log-output" class="w-full h-64 text-xs font-mono mb-4 bg-black p-3" readonly></textarea>
-            <div class="flex gap-3">
-                <button onclick="copyLog()" class="flex-1 bg-sky-600 py-2 rounded-lg font-bold">Copy Text</button>
-                <button onclick="closeModal()" class="flex-1 bg-slate-700 py-2 rounded-lg">Close</button>
-            </div>
-        </div>
-    </div>
+    <!-- HISTORY VIEW -->
+    <main id="view-history" class="hidden space-y-4">
+        <div id="history-list" class="space-y-4"></div>
+        <button onclick="copyAllLogs()" class="w-full py-4 bg-slate-800 text-xs font-bold rounded-xl">Copy All Sprint 2 Logs</button>
+    </main>
 
     <script>
-        const sprintBaseline = {
-            'Tue': { name: 'Strength & Alignment', exercises: [
-                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
-                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
-                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
-            ]},
-            'Thu': { name: 'Strength & Alignment', exercises: [
-                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
-                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
-                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
-            ]},
-            'Sun': { name: 'Strength & Alignment', exercises: [
-                { name: 'Scapular Pull-ups', circuits: 3, cues: 'Dead hang, pull shoulders down, lock elbows' },
-                { name: 'Hollow Body Holds', circuits: 3, cues: 'Lower back pinned to floor, toes pointed' },
-                { name: 'Banded Leg Alignment', circuits: 3, cues: 'Band above knee, 90deg hold (Silent Sanctuary)' }
-            ]},
-            'Mon': { name: 'Mobility & Skills', exercises: [
-                { name: 'Ankle Wall Drives', circuits: 3, cues: 'No band, 5.5" cap, dynamic range' },
-                { name: 'Planche Leans', circuits: 3, cues: 'Protraction focus, lean forward, straight arms' },
-                { name: '90/90 Hip Openers', circuits: 3, cues: 'Back upright, rotate internal/external' }
-            ]},
-            'Wed': { name: 'Mobility & Skills', exercises: [
-                { name: 'Ankle Wall Drives', circuits: 3, cues: 'No band, 5.5" cap, dynamic range' },
-                { name: 'Planche Leans', circuits: 3, cues: 'Protraction focus, lean forward, straight arms' },
-                { name: '90/90 Hip Openers', circuits: 3, cues: 'Back upright, rotate internal/external' }
-            ]},
-            'Fri': { name: 'Active Recovery & Rest', exercises: [] },
-            'Sat': { name: 'Active Recovery & Rest', exercises: [] }
+        const joints = ['Elbow', 'Knee', 'Shoulder'];
+        const sspOptions = {
+            Sound: ['Silent', 'Pop', 'Click', 'Grit'],
+            Sensation: ['Smooth', 'Slip', 'Tight', 'Unstable']
         };
 
-        let currentWorkout = null;
+        const sprint2Workouts = {
+            'Tue': { name: 'Strength & Alignment', ex: [
+                { name: 'Scapular Pull-ups', focus: 'Lat Flare', unit: 'Reps', sets: 3 },
+                { name: 'Hollow Body Holds', focus: 'Hands-to-Heels', unit: 'Secs', sets: 3 },
+                { name: 'Banded Alignment', focus: 'Tripod Foot', unit: 'Secs', sets: 3 }
+            ]},
+            'Thu': { name: 'Strength & Alignment', ex: [
+                { name: 'Scapular Pull-ups', focus: 'Lat Flare', unit: 'Reps', sets: 3 },
+                { name: 'Hollow Body Holds', focus: 'Hands-to-Heels', unit: 'Secs', sets: 3 },
+                { name: 'Banded Alignment', focus: 'Tripod Foot', unit: 'Secs', sets: 3 }
+            ]},
+            'Sun': { name: 'Strength & Alignment', ex: [
+                { name: 'Scapular Pull-ups', focus: 'Lat Flare', unit: 'Reps', sets: 3 },
+                { name: 'Hollow Body Holds', focus: 'Hands-to-Heels', unit: 'Secs', sets: 3 },
+                { name: 'Banded Alignment', focus: 'Tripod Foot', unit: 'Secs', sets: 3 }
+            ]},
+            'Mon': { name: 'Mobility & Skills', ex: [
+                { name: 'Ankle Wall Drives', focus: '5.5" Cap', unit: 'Reps', sets: 3 },
+                { name: 'Planche Leans', focus: 'Protraction', unit: 'Secs', sets: 3 },
+                { name: '90/90 Hip Openers', focus: 'Torso Upright', unit: 'Secs', sets: 3 }
+            ]},
+            'Wed': { name: 'Mobility & Skills', ex: [
+                { name: 'Ankle Wall Drives', focus: '5.5" Cap', unit: 'Reps', sets: 3 },
+                { name: 'Planche Leans', focus: 'Protraction', unit: 'Secs', sets: 3 },
+                { name: '90/90 Hip Openers', focus: 'Torso Upright', unit: 'Secs', sets: 3 }
+            ]},
+            'Fri': { name: 'Rest / Recovery', ex: [] },
+            'Sat': { name: 'Rest / Recovery', ex: [] }
+        };
+
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = days[new Date().getDay()];
+        const workout = sprint2Workouts[today];
 
-        window.onload = () => {
-            loadWorkout(today);
-            loadHistory();
-        };
-
-        function loadWorkout(day) {
-            currentWorkout = sprintBaseline[day];
-            document.getElementById('workout-title').innerText = `${day}: ${currentWorkout.name}`;
+        function init() {
+            document.getElementById('routine-title').innerText = workout.name;
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'}).toUpperCase();
             
-            const container = document.getElementById('exercise-list');
-            container.innerHTML = '';
-
-            if (currentWorkout.exercises.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 italic">No structured baseline for today. Focused on active recovery and systemic calm.</p>`;
-                return;
-            }
-
-            currentWorkout.exercises.forEach((ex, exIdx) => {
-                const exCard = document.createElement('div');
-                exCard.className = 'border-l-4 border-sky-800 pl-4 py-2';
-                
-                let circuitsHTML = '';
-                for(let i=1; i<=ex.circuits; i++) {
-                    circuitsHTML += `
-                        <div class="mt-2 grid grid-cols-1 gap-1">
-                            <label class="text-[10px] text-sky-400">Round ${i} Notes (Reps/Range)</label>
-                            <input type="text" id="ex-${exIdx}-r${i}" placeholder="e.g. 12 reps, 5s hold" class="text-xs py-1">
-                        </div>
-                    `;
-                }
-
-                exCard.innerHTML = `
-                    <h4 class="font-bold text-white text-md">${ex.name}</h4>
-                    <p class="text-[10px] text-slate-500 mb-2 italic">${ex.cues}</p>
-                    ${circuitsHTML}
-                `;
-                container.appendChild(exCard);
-            });
-        }
-
-        function switchTab(tab) {
-            document.getElementById('content-session').classList.toggle('hidden', tab !== 'session');
-            document.getElementById('content-history').classList.toggle('hidden', tab !== 'history');
-            document.getElementById('tab-session').classList.toggle('tab-active', tab === 'session');
-            document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
-            if(tab === 'session') document.getElementById('tab-history').classList.add('text-slate-400');
-            else document.getElementById('tab-history').classList.remove('text-slate-400');
-        }
-
-        function toggleBtn(btn, group) {
-            const btns = btn.parentElement.querySelectorAll('.btn-toggle');
-            btns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function setSSP(category, value) {
-            const parent = document.getElementById(`ssp-${category}`);
-            parent.querySelectorAll('.btn-toggle').forEach(b => {
-                b.classList.toggle('active', b.innerText === value);
-            });
-        }
-
-        function getActive(id) {
-            const container = typeof id === 'string' ? document.getElementById(id) : id;
-            const active = container.querySelector('.active');
-            return active ? active.innerText : 'N/A';
-        }
-
-        function generateLog() {
-            const energy = document.getElementById('energy').value;
-            const sleep = getActive(document.querySelectorAll('.btn-toggle')[0].parentElement);
-            const preNotes = document.getElementById('pre-notes').value;
-            
-            const warmupDone = document.getElementById('warmup-check').checked ? "YES" : "NO";
-            const warmupNotes = document.getElementById('warmup-notes').value;
-
-            const sSound = getActive('ssp-sound');
-            const sSensation = getActive('ssp-sensation');
-            const sPain = document.getElementById('ssp-pain').value;
-
-            const safety = getActive(document.querySelectorAll('.btn-toggle')[document.querySelectorAll('.btn-toggle').length-2].parentElement);
-            const postNotes = document.getElementById('post-notes').value;
-
-            let exerciseLogs = '';
-            currentWorkout.exercises.forEach((ex, exIdx) => {
-                exerciseLogs += `\n[${ex.name.toUpperCase().replace(/\s/g, '_')}]: `;
-                let rounds = [];
-                for(let i=1; i<=ex.circuits; i++) {
-                    const val = document.getElementById(`ex-${exIdx}-r${i}`).value || "completed";
-                    rounds.push(`R${i}: ${val}`);
-                }
-                exerciseLogs += rounds.join(' | ');
-            });
-
-            const timestamp = new Date().toLocaleString();
-            const log = `[DATE]: ${timestamp}
-[WORKOUT]: ${today} - ${currentWorkout.name.toUpperCase().replace(/\s/g, '_')}
-
-[PRE-WORKOUT_REPORT]
-Energy: ${energy}/10
-Sleep: ${sleep}
-Notes: ${preNotes || "None"}
-
-[WORKOUT_REPORT]
-Warmup_Completed: ${warmupDone}
-Warmup_Notes: ${warmupNotes || "None"}
-${exerciseLogs}
-
-[POST-WORKOUT_REPORT]
-Knee: [${sSound} / ${sSensation} / P:${sPain}]
-Safety_Cues: ${safety}
-Notes: ${postNotes || "None"}`;
-
-            document.getElementById('log-output').value = log;
-            document.getElementById('log-modal').classList.remove('hidden');
-            document.getElementById('log-modal').classList.add('flex');
-
-            saveToHistory(log);
-        }
-
-        function saveToHistory(log) {
-            let history = JSON.parse(localStorage.getItem('workout_history') || '[]');
-            history.unshift({ date: new Date().toLocaleDateString(), log: log });
-            localStorage.setItem('workout_history', JSON.stringify(history));
+            renderSSP('pre');
+            renderExercises();
+            renderSSP('post');
             loadHistory();
         }
 
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('workout_history') || '[]');
-            const container = document.getElementById('history-container');
-            container.innerHTML = history.length ? '' : '<p class="text-slate-500 italic">No logs found yet.</p>';
-            
-            history.forEach((item, idx) => {
+        function renderSSP(phase) {
+            const container = document.getElementById(`${phase}-ssp-container`);
+            joints.forEach(joint => {
                 const div = document.createElement('div');
-                div.className = 'card text-xs';
+                div.className = "bg-slate-900/30 p-3 rounded-xl border border-slate-800/50";
                 div.innerHTML = `
-                    <div class="flex justify-between mb-2">
-                        <span class="font-bold text-sky-400">${item.date}</span>
-                        <button onclick="deleteLog(${idx})" class="text-red-500">Delete</button>
+                    <p class="text-[10px] font-bold text-slate-400 mb-2 uppercase">${joint} Status</p>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="ssp-grid" id="${phase}-${joint}-sound">
+                                ${sspOptions.Sound.map((s,i) => `<div class="btn-toggle ${i===0?'active':''}" onclick="setSSP(this)">${s}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="ssp-grid" id="${phase}-${joint}-sens">
+                                ${sspOptions.Sensation.map((s,i) => `<div class="btn-toggle ${i===0?'active':''}" onclick="setSSP(this)">${s}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-bold text-slate-500">PAIN:</span>
+                            <input type="range" min="0" max="10" value="0" class="h-1 accent-rose-500" id="${phase}-${joint}-pain">
+                        </div>
                     </div>
-                    <pre class="bg-black/40 p-2 rounded overflow-x-auto whitespace-pre-wrap">${item.log}</pre>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function deleteLog(idx) {
-            let history = JSON.parse(localStorage.getItem('workout_history') || '[]');
-            history.splice(idx, 1);
-            localStorage.setItem('workout_history', JSON.stringify(history));
+        function renderExercises() {
+            const list = document.getElementById('exercise-list');
+            if(workout.ex.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-500 italic py-10">Active Recovery Protocol. Monitor MG Status carefully.</p>`;
+                return;
+            }
+            workout.ex.forEach((ex, i) => {
+                const div = document.createElement('div');
+                div.className = "space-y-4";
+                div.innerHTML = `
+                    <div class="flex justify-between items-end border-b border-slate-800 pb-2">
+                        <div>
+                            <h4 class="font-bold text-sm text-slate-200">${ex.name}</h4>
+                            <span class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">Focus: ${ex.focus}</span>
+                        </div>
+                        <span class="text-[9px] text-slate-600 font-mono">Sprint 2 Integrity Filter</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500 uppercase text-center">
+                        <span>${ex.unit} / Zero Reps</span>
+                        <span>Notes</span>
+                    </div>
+                    <div class="space-y-2" id="ex-${i}-sets">
+                        ${Array.from({length: ex.sets}).map((_, s) => `
+                            <div class="flex gap-2 items-center">
+                                <div class="w-10 text-[10px] font-bold text-slate-700">SET ${s+1}</div>
+                                <div class="flex-1 flex gap-1">
+                                    <input type="number" placeholder="0" class="w-1/2 text-center" id="ex-${i}-s${s}-val">
+                                    <div class="w-px bg-slate-800"></div>
+                                    <input type="number" placeholder="0" class="w-1/2 zero-input" id="ex-${i}-s${s}-zero">
+                                </div>
+                                <input type="text" placeholder="..." class="flex-1 text-xs" id="ex-${i}-s${s}-note">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function setSSP(btn) {
+            btn.parentElement.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function updateShieldLabel(val) {
+            const label = document.getElementById('shield-text');
+            const texts = ["1: Full Power", "2: Slight Cost", "3: Balanced", "4: Heavy Load", "5: Symptomatic"];
+            label.innerText = texts[val-1];
+            label.className = `text-[10px] font-bold mt-1 uppercase ${val > 3 ? 'text-rose-400' : 'text-emerald-400'}`;
+        }
+
+        function getSSPData(phase) {
+            return joints.map(joint => {
+                const s = document.getElementById(`${phase}-${joint}-sound`).querySelector('.active').innerText;
+                const sens = document.getElementById(`${phase}-${joint}-sens`).querySelector('.active').innerText;
+                const p = document.getElementById(`${phase}-${joint}-pain`).value;
+                return `${joint} [${s}/${sens}/P:${p}]`;
+            }).join(', ');
+        }
+
+        function submitSession() {
+            const preSSP = getSSPData('pre');
+            const postSSP = getSSPData('post');
+            const mg = document.getElementById('mg-shield').value;
+            const vibe = document.getElementById('session-vibe').value;
+            const warmup = document.getElementById('warmup-done').checked ? "YES" : "NO";
+
+            let workoutData = workout.ex.map((ex, i) => {
+                let setsStr = Array.from({length: ex.sets}).map((_, s) => {
+                    const val = document.getElementById(`ex-${i}-s${s}-val`).value || '0';
+                    const zero = document.getElementById(`ex-${i}-s${s}-zero`).value || '0';
+                    const note = document.getElementById(`ex-${i}-s${s}-note`).value;
+                    return `S${s+1}: ${val}/${zero}${note ? ' ('+note+')' : ''}`;
+                }).join(' | ');
+                return `${ex.name}: ${setsStr} [Focus: ${ex.focus}]`;
+            }).join('\n');
+
+            const logText = `[SESSION_LOG: SPRINT 2_${today.toUpperCase()}]
+Date/Time: ${new Date().toLocaleString()}
+I. Pre-Workout SSP: ${preSSP}
+II. Workout Report:
+Warmup: ${warmup} (${document.getElementById('warmup-notes').value || 'None'})
+${workoutData}
+III. Post-Workout Report
+Session Notes (Vibe): ${vibe || 'No notes'}
+Post-Workout SSP: ${postSSP}
+MG Status: ${mg} (Shield Gauge)`;
+
+            let logs = JSON.parse(localStorage.getItem('david_s2_logs') || '[]');
+            logs.unshift(logText);
+            localStorage.setItem('david_s2_logs', JSON.stringify(logs));
+            
+            alert("Integrity Locked.");
+            location.reload();
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('history-list');
+            const logs = JSON.parse(localStorage.getItem('david_s2_logs') || '[]');
+            container.innerHTML = logs.map((log, i) => `
+                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap relative border-sky-900/20">
+                    <button onclick="deleteLog(${i})" class="absolute top-2 right-2 text-rose-800">DEL</button>
+                    ${log.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+            `).join('');
+        }
+
+        function showTab(tab) {
+            document.getElementById('view-session').classList.toggle('hidden', tab !== 'session');
+            document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('btn-session').classList.toggle('tab-active', tab === 'session');
+            document.getElementById('btn-history').classList.toggle('tab-active', tab === 'history');
+            document.getElementById('btn-history').classList.toggle('text-slate-500', tab !== 'history');
+        }
+
+        function deleteLog(i) {
+            let logs = JSON.parse(localStorage.getItem('david_s2_logs') || '[]');
+            logs.splice(i, 1);
+            localStorage.setItem('david_s2_logs', JSON.stringify(logs));
             loadHistory();
         }
 
-        function copyLog() {
-            const textarea = document.getElementById('log-output');
-            textarea.select();
-            document.execCommand('copy');
-            const btn = event.target;
-            btn.innerText = "COPIED!";
-            setTimeout(() => btn.innerText = "Copy Text", 2000);
+        function copyAllLogs() {
+            const logs = JSON.parse(localStorage.getItem('david_s2_logs') || '[]');
+            navigator.clipboard.writeText(logs.join('\n\n---\n\n'));
+            alert("All Sprint 2 Logs Copied.");
         }
 
-        function closeModal() {
-            document.getElementById('log-modal').classList.add('hidden');
-            document.getElementById('log-modal').classList.remove('flex');
-        }
+        init();
     </script>
 </body>
 </html>
