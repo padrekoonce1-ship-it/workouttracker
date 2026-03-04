@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprint 2 Integrity Tracker V1.1</title>
+    <title>Sprint 2 V1.2 - Mobility & Skills</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #020617; color: #f1f5f9; font-family: ui-sans-serif, system-ui, sans-serif; }
@@ -11,88 +11,78 @@
         .card { background-color: #0f172a; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid #1e293b; transition: all 0.3s; }
         .btn-toggle { padding: 0.5rem; border-radius: 0.4rem; background: #1e293b; font-size: 0.65rem; transition: all 0.2s; cursor: pointer; text-align: center; border: 1px solid transparent; font-weight: 600; color: #94a3b8; }
         .btn-toggle.active { background: #38bdf8; color: #020617; font-weight: 900; border-color: #7dd3fc; }
-        input, textarea, select { background: #020617; border: 1px solid #1e293b; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
+        input, textarea { background: #020617; border: 1px solid #1e293b; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
         label { display: block; margin-bottom: 0.35rem; font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
         
-        /* SSP Pain Slider Styling */
         .pain-slider { -webkit-appearance: none; height: 6px; border-radius: 5px; outline: none; transition: background 0.3s; }
-        .pain-0 { background: #22c55e !important; } /* Green */
-        .pain-1, .pain-2 { background: #eab308 !important; } /* Yellow */
-        .pain-3 { background: #ef4444 !important; } /* Red */
+        .pain-0 { background: #22c55e !important; }
+        .pain-1, .pain-2 { background: #eab308 !important; }
+        .pain-3 { background: #ef4444 !important; }
         .pain-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #0f172a; }
 
         .zero-input { color: #ef4444; font-weight: 800; border-color: #450a0a; }
         .gold-check { width: 1.25rem; height: 1.25rem; accent-color: #fbbf24; cursor: pointer; }
         .ssp-matrix-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 0.75rem; }
         .matrix-col { display: flex; flex-direction: column; gap: 0.25rem; }
+        .block-header { border-left: 4px solid #38bdf8; padding-left: 0.75rem; margin-top: 2rem; margin-bottom: 1rem; }
     </style>
 </head>
 <body class="max-w-md mx-auto p-4 pb-32">
 
     <header class="mb-6 flex justify-between items-end">
         <div>
-            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 2 • Block 1</h1>
-            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Loading...</h2>
+            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 2 • V1.2</h1>
+            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Mobility & Skills</h2>
         </div>
         <div id="current-date" class="text-[10px] font-mono bg-slate-800 px-2 py-1 rounded text-slate-400"></div>
     </header>
 
     <nav class="flex border-b border-slate-800 mb-6 sticky top-0 bg-[#020617]/95 backdrop-blur-sm z-30">
         <button id="nav-session" class="flex-1 py-4 text-xs font-black tab-active" onclick="showTab('session')">SESSION</button>
-        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">LOG ARCHIVE</button>
+        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">ARCHIVE</button>
     </nav>
 
     <main id="view-session">
         
-        <!-- SECTION I: PRE-WORKOUT SSP AUDIT -->
+        <!-- SECTION I: PRE-WORKOUT SSP -->
         <section class="card border-t-2 border-t-sky-500">
             <h3 class="text-xs font-black mb-4 tracking-widest text-sky-400">I. PRE-WORKOUT SSP AUDIT</h3>
-            <div id="pre-ssp-container" class="space-y-8">
-                <!-- Joint Matrices Injected Here -->
-            </div>
+            <div id="pre-ssp-container" class="space-y-8"></div>
             <div class="mt-6 pt-4 border-t border-slate-800">
-                <label>Pre-Session Vibe</label>
-                <textarea id="pre-notes" rows="1" placeholder="Current baseline notes..."></textarea>
+                <textarea id="pre-notes" rows="1" placeholder="Mindset / Readiness..."></textarea>
             </div>
         </section>
 
-        <!-- SECTION II: WORKOUT REPORT -->
+        <!-- SECTION II: WORKOUT BLOCKS -->
         <section class="card border-t-2 border-t-emerald-500">
             <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400">II. WORKOUT REPORT</h3>
             
-            <div class="mb-8 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" id="warmup-check" class="w-5 h-5 accent-emerald-500">
-                    <label for="warmup-check" class="m-0 text-white font-bold normal-case text-sm">Optimized Warmup Done</label>
-                </div>
+            <div class="block-header">
+                <h4 class="text-[10px] font-black text-sky-400 uppercase">Block 1: Ankle & Hips</h4>
             </div>
+            <div id="block-1-list" class="space-y-10"></div>
 
-            <div id="exercise-list" class="space-y-12">
-                <!-- Exercises Injected Here -->
+            <div class="block-header">
+                <h4 class="text-[10px] font-black text-sky-400 uppercase">Block 2: Skills & Compression</h4>
             </div>
+            <div id="block-2-list" class="space-y-10"></div>
         </section>
 
-        <!-- SECTION III: POST-WORKOUT REPORT -->
+        <!-- SECTION III: POST-WORKOUT -->
         <section class="card border-t-2 border-t-rose-500">
-            <h3 class="text-xs font-black mb-4 tracking-widest text-rose-400">III. POST-WORKOUT FEEDBACK</h3>
-            
+            <h3 class="text-xs font-black mb-4 tracking-widest text-rose-400">III. POST-WORKOUT REPORT</h3>
             <div class="mb-8 bg-slate-900/40 p-4 rounded-xl">
                 <label class="text-sky-400">MG Status (The Shield)</label>
-                <input type="range" id="mg-shield" min="1" max="5" value="1" class="accent-sky-500 mt-2" oninput="document.getElementById('shield-val').innerText = this.value">
+                <input type="range" id="mg-shield" min="1" max="5" value="1" class="accent-sky-500 mt-2 w-full" oninput="document.getElementById('shield-val').innerText = this.value">
                 <div class="flex justify-between text-[9px] font-bold mt-1 uppercase text-slate-500">
                     <span>1: Full Power</span>
                     <span id="shield-val" class="text-sky-400">1</span>
                     <span>5: Symptomatic</span>
                 </div>
             </div>
-
-            <div id="post-ssp-container" class="space-y-8">
-                <!-- Joint Matrices Injected Here -->
-            </div>
-
+            <div id="post-ssp-container" class="space-y-8"></div>
             <div class="mt-8">
-                <label>Session Notes (Aha! Moments & Vibes)</label>
-                <textarea id="post-notes" rows="3" placeholder="How did the recruitment feel?"></textarea>
+                <textarea id="post-notes" rows="3" placeholder="Session Notes (Vibe, Lasagna Energy, etc.)"></textarea>
             </div>
         </section>
 
@@ -101,10 +91,9 @@
         </button>
     </main>
 
-    <!-- HISTORY VIEW -->
     <main id="view-history" class="hidden space-y-4">
         <div id="history-container" class="space-y-4"></div>
-        <button onclick="copyAllLogs()" class="w-full py-4 bg-slate-800 text-xs font-bold rounded-xl uppercase">Copy Data Archive</button>
+        <button onclick="copyAllLogs()" class="w-full py-4 bg-slate-800 text-xs font-bold rounded-xl uppercase">Copy All Data</button>
     </main>
 
     <script>
@@ -114,49 +103,23 @@
             Sensation: ['Smooth', 'Slip', 'Tight', 'Unstable']
         };
 
-        const architecture = {
-            'Tue': { type: 'Strength & Alignment', focus: 'POSTERIOR RECRUITMENT', ex: [
-                { name: 'Scapular Pull-ups', bench: '10 Reps (2-2-1)', null: 'Shrugging / Loss of Lat Flare' },
-                { name: 'Hollow Body Holds', bench: '40-45s', null: 'Rib Flare / L-Back Arch' },
-                { name: 'Superman Holds', bench: '30s', null: 'Breath Holding / No Glute Engagement' },
-                { name: 'Banded Leg Alignment', bench: '15 Reps (90°)', null: 'Knee Cave / Arch Collapse' }
-            ]},
-            'Thu': { type: 'Strength & Alignment', focus: 'POSTERIOR RECRUITMENT', ex: [
-                { name: 'Scapular Pull-ups', bench: '10 Reps (2-2-1)', null: 'Shrugging / Loss of Lat Flare' },
-                { name: 'Hollow Body Holds', bench: '40-45s', null: 'Rib Flare / L-Back Arch' },
-                { name: 'Superman Holds', bench: '30s', null: 'Breath Holding / No Glute Engagement' },
-                { name: 'Banded Leg Alignment', bench: '15 Reps (90°)', null: 'Knee Cave / Arch Collapse' }
-            ]},
-            'Sun': { type: 'Strength & Alignment', focus: 'POSTERIOR RECRUITMENT', ex: [
-                { name: 'Scapular Pull-ups', bench: '10 Reps (2-2-1)', null: 'Shrugging / Loss of Lat Flare' },
-                { name: 'Hollow Body Holds', bench: '40-45s', null: 'Rib Flare / L-Back Arch' },
-                { name: 'Superman Holds', bench: '30s', null: 'Breath Holding / No Glute Engagement' },
-                { name: 'Banded Leg Alignment', bench: '15 Reps (90°)', null: 'Knee Cave / Arch Collapse' }
-            ]},
-            'Mon': { type: 'Mobility & Skills', focus: 'CENTER-OF-MASS CALIBRATION', ex: [
-                { name: 'Crow Pose Toe-Taps', bench: '30s Total', null: 'Elbow Flare / Collapse' },
-                { name: 'Deep Squat Holds', bench: '1 Minute', null: 'Heel Lift / Knee Cave / Butt Wink' },
-                { name: 'Ankle Wall Drives', bench: '10ea (5-count)', null: 'Heel Daylight / Midline Drift', bilateral: true }
-            ]},
-            'Wed': { type: 'Mobility & Skills', focus: 'CENTER-OF-MASS CALIBRATION', ex: [
-                { name: 'Crow Pose Toe-Taps', bench: '30s Total', null: 'Elbow Flare / Collapse' },
-                { name: 'Deep Squat Holds', bench: '1 Minute', null: 'Heel Lift / Knee Cave / Butt Wink' },
-                { name: 'Ankle Wall Drives', bench: '10ea (5-count)', null: 'Heel Daylight / Midline Drift', bilateral: true }
-            ]},
-            'Fri': { type: 'Active Recovery', focus: 'SYSTEMIC CALM', ex: [] },
-            'Sat': { type: 'Active Recovery', focus: 'SYSTEMIC CALM', ex: [] }
+        const todayWorkout = {
+            block1: [
+                { name: 'Ankle Wall Drives', bench: '3x10-12 (5.5" Cap)', null: 'Heel Lift / Knee Cave', cue: 'Short Foot → Medial Pull', recovery: 'Seated Knee Int. Rotation', bilateral: true },
+                { name: 'Deep Squat Holds', bench: '3x45-60s', null: 'Butt-Wink / Weight Shift Out', cue: 'Pelvis is a Bowl of Water', recovery: 'Box Breathing (4-4-4-4)' }
+            ],
+            block2: [
+                { name: 'Planche Leans', bench: '3x15-20s', null: 'Scap Winging / Elbow Bend', cue: 'Protraction Priority', recovery: 'Grip-Flush (Reverse Prayer)' },
+                { name: 'Crow Pose Toe-Taps', bench: '3x5-8 Tap ea.', null: 'Head Drop / Tricep Gap', cue: 'The Teeter-Totter Weight Shift', recovery: 'Wrist Flossing', bilateral: true }
+            ]
         };
 
-        const todayKey = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()];
-        const workout = architecture[todayKey];
-
         function init() {
-            document.getElementById('routine-title').innerText = workout.type;
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
-            
             renderJointMatrices('pre');
             renderJointMatrices('post');
-            renderExercises();
+            renderBlock('block-1-list', todayWorkout.block1, 0);
+            renderBlock('block-2-list', todayWorkout.block2, 10);
             loadHistory();
         }
 
@@ -169,30 +132,18 @@
                     <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2">
                         <span class="text-[10px] font-black tracking-tighter text-slate-400 uppercase">${joint} Audit</span>
                         <div class="flex items-center gap-2">
-                             <span class="text-[9px] font-bold text-slate-500">PAIN:</span>
                              <span id="${phase}-${joint}-pain-val" class="text-[10px] font-black text-emerald-400">0</span>
                         </div>
                     </div>
                     <div class="ssp-matrix-grid">
-                        <div class="matrix-col">
-                            <label class="text-[8px] opacity-50">Sound</label>
-                            <div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sound">
-                                ${sspOptions.Sound.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
-                            </div>
-                        </div>
-                        <div class="matrix-col">
-                            <label class="text-[8px] opacity-50">Sensation</label>
-                            <div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sens">
-                                ${sspOptions.Sensation.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
-                            </div>
-                        </div>
+                        <div class="matrix-col"><div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sound">
+                            ${sspOptions.Sound.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
+                        </div></div>
+                        <div class="matrix-col"><div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sens">
+                            ${sspOptions.Sensation.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
+                        </div></div>
                     </div>
-                    <div class="mt-2">
-                        <input type="range" min="0" max="3" value="0" 
-                            id="${phase}-${joint}-pain-slider"
-                            class="pain-slider pain-0 w-full"
-                            oninput="updatePainSlider(this, '${phase}-${joint}-pain-val')">
-                    </div>
+                    <input type="range" min="0" max="3" value="0" id="${phase}-${joint}-pain-slider" class="pain-slider pain-0 w-full mt-2" oninput="updatePainSlider(this, '${phase}-${joint}-pain-val')">
                 `;
                 container.appendChild(div);
             });
@@ -202,69 +153,52 @@
             const val = el.value;
             const display = document.getElementById(valId);
             display.innerText = val;
-            
-            // Handle Color Coding
-            el.classList.remove('pain-0', 'pain-1', 'pain-2', 'pain-3');
-            el.classList.add(`pain-${val}`);
-            
-            // Handle display color
-            display.classList.remove('text-emerald-400', 'text-yellow-400', 'text-red-500');
-            if(val == 0) display.classList.add('text-emerald-400');
-            else if(val == 3) display.classList.add('text-red-500');
-            else display.classList.add('text-yellow-400');
+            el.className = `pain-slider pain-${val} w-full mt-2`;
+            display.className = `text-[10px] font-black ${val==0?'text-emerald-400':val==3?'text-red-500':'text-yellow-400'}`;
         }
 
-        function renderExercises() {
-            const list = document.getElementById('exercise-list');
-            if (workout.ex.length === 0) {
-                list.innerHTML = `<p class="text-center text-slate-500 italic py-12">Rest Day Protocol.</p>`;
-                return;
-            }
-
-            workout.ex.forEach((ex, exIdx) => {
-                const exContainer = document.createElement('div');
-                exContainer.className = "space-y-4";
+        function renderBlock(elementId, exercises, baseIdx) {
+            const container = document.getElementById(elementId);
+            exercises.forEach((ex, idx) => {
+                const globalIdx = baseIdx + idx;
+                const div = document.createElement('div');
+                div.className = "space-y-4";
                 
-                let headers = ex.bilateral ? `
-                    <div class="grid grid-cols-4 gap-2 text-[8px] font-black text-slate-600 uppercase text-center">
-                        <div>Set</div><div>L: R/Z</div><div>R: R/Z</div><div>Aha!</div>
-                    </div>` : `
-                    <div class="grid grid-cols-3 gap-2 text-[8px] font-black text-slate-600 uppercase text-center">
-                        <div>Set</div><div>Rep / Zero</div><div>Aha!</div>
-                    </div>`;
-
-                let setsHtml = '';
-                for(let i=1; i<=4; i++) {
-                    if (ex.bilateral) {
-                        setsHtml += `
+                let setInputs = '';
+                for(let s=1; s<=4; s++) {
+                    if(ex.bilateral) {
+                        setInputs += `
                         <div class="grid grid-cols-4 gap-2 items-center">
-                            <span class="text-[10px] font-bold text-slate-700 text-center">S${i}</span>
-                            <div class="flex gap-1"><input type="number" id="ex-${exIdx}-s${i}-l-v" class="w-1/2 p-1 text-center text-xs"><input type="number" id="ex-${exIdx}-s${i}-l-z" class="w-1/2 p-1 text-center text-xs zero-input"></div>
-                            <div class="flex gap-1"><input type="number" id="ex-${exIdx}-s${i}-r-v" class="w-1/2 p-1 text-center text-xs"><input type="number" id="ex-${exIdx}-s${i}-r-z" class="w-1/2 p-1 text-center text-xs zero-input"></div>
-                            <div class="flex justify-center"><input type="checkbox" id="ex-${exIdx}-s${i}-aha" class="gold-check"></div>
+                            <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
+                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-l-v" placeholder="L" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-l-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
+                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-r-v" placeholder="R" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-r-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
+                            <div class="flex justify-center"><input type="checkbox" id="ex-${globalIdx}-s${s}-aha" class="gold-check"></div>
                         </div>`;
                     } else {
-                        setsHtml += `
+                        setInputs += `
                         <div class="grid grid-cols-3 gap-2 items-center">
-                            <span class="text-[10px] font-bold text-slate-700 text-center">S${i}</span>
-                            <div class="flex gap-1"><input type="number" id="ex-${exIdx}-s${i}-v" class="w-1/2 p-1 text-center text-xs"><input type="number" id="ex-${exIdx}-s${i}-z" class="w-1/2 p-1 text-center text-xs zero-input"></div>
-                            <div class="flex justify-center"><input type="checkbox" id="ex-${exIdx}-s${i}-aha" class="gold-check"></div>
+                            <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
+                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-v" placeholder="Val" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
+                            <div class="flex justify-center"><input type="checkbox" id="ex-${globalIdx}-s${s}-aha" class="gold-check"></div>
                         </div>`;
                     }
                 }
 
-                exContainer.innerHTML = `
+                div.innerHTML = `
                     <div class="border-b border-slate-800 pb-2">
-                        <h4 class="text-sm font-black text-slate-200">${ex.name}</h4>
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Bench: ${ex.bench}</span>
-                            <span class="text-[9px] font-bold text-rose-500 uppercase tracking-tighter">Null: ${ex.null}</span>
+                        <h5 class="text-sm font-black text-slate-100">${ex.name}</h5>
+                        <div class="text-[8px] flex flex-col gap-0.5 mt-1">
+                            <span class="text-sky-400 font-bold uppercase">Cue: ${ex.cue}</span>
+                            <span class="text-emerald-500 uppercase font-bold">Goal: ${ex.bench}</span>
+                            <span class="text-rose-500 uppercase font-bold">Null: ${ex.null}</span>
+                            <span class="text-slate-500 uppercase">Recovery: ${ex.recovery}</span>
                         </div>
                     </div>
-                    ${headers} ${setsHtml}
-                    <input type="text" id="ex-${exIdx}-note" placeholder="Exercise notes..." class="text-[10px] mt-1 h-7 opacity-50">
+                    ${ex.bilateral ? `<div class="grid grid-cols-4 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>L: R/Z</div><div>R: R/Z</div><div>Aha</div></div>` : `<div class="grid grid-cols-3 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>Score/Zero</div><div>Aha</div></div>`}
+                    ${setInputs}
+                    <textarea id="ex-${globalIdx}-note" rows="1" placeholder="Feel / Progress..." class="text-[10px] opacity-40"></textarea>
                 `;
-                list.appendChild(exContainer);
+                container.appendChild(div);
             });
         }
 
@@ -280,75 +214,58 @@
             document.getElementById('nav-history').classList.toggle('tab-active', tab === 'history');
         }
 
-        function getSSPData(phase) {
+        function getSSP(phase) {
             return joints.map(j => {
-                const sound = document.getElementById(`${phase}-${j}-sound`).querySelector('.active').innerText;
-                const sens = document.getElementById(`${phase}-${j}-sens`).querySelector('.active').innerText;
-                const pain = document.getElementById(`${phase}-${j}-pain-slider`).value;
-                return `${j}: [${sound}/${sens}/P:${pain}]`;
+                const s = document.getElementById(`${phase}-${j}-sound`).querySelector('.active').innerText;
+                const sen = document.getElementById(`${phase}-${j}-sens`).querySelector('.active').innerText;
+                const p = document.getElementById(`${phase}-${j}-pain-slider`).value;
+                return `${j}:[${s}/${sen}/P:${p}]`;
             }).join(' | ');
         }
 
         function submitSession() {
-            const preSSP = getSSPData('pre');
-            const postSSP = getSSPData('post');
-            
-            let exLog = [];
-            workout.ex.forEach((ex, idx) => {
-                let setsData = [];
-                for(let i=1; i<=4; i++) {
-                    const aha = document.getElementById(`ex-${idx}-s${i}-aha`).checked ? "★" : "";
-                    if (ex.bilateral) {
-                        const lv = document.getElementById(`ex-${idx}-s${i}-l-v`).value;
-                        const lz = document.getElementById(`ex-${idx}-s${i}-l-z`).value;
-                        const rv = document.getElementById(`ex-${idx}-s${i}-r-v`).value;
-                        const rz = document.getElementById(`ex-${idx}-s${i}-r-z`).value;
-                        if(lv || rv) setsData.push(`S${i}: L ${lv}/${lz}, R ${rv}/${rz}${aha}`);
+            let log = `[REGISTERED_LOG: SPRINT_2_V1.2]
+Date: ${new Date().toLocaleString()}
+I. PRE: ${getSSP('pre')}
+Notes: ${document.getElementById('pre-notes').value || 'N/A'}
+
+II. WORKOUT REPORT
+Warmup: ${document.getElementById('warmup-check').checked ? 'DONE' : 'SKIPPED'}\n`;
+
+            [...todayWorkout.block1, ...todayWorkout.block2].forEach((ex, idx) => {
+                let actualIdx = idx < todayWorkout.block1.length ? idx : idx + 10 - todayWorkout.block1.length;
+                let sets = [];
+                for(let s=1; s<=4; s++) {
+                    const aha = document.getElementById(`ex-${actualIdx}-s${s}-aha`).checked ? "★" : "";
+                    if(ex.bilateral) {
+                        const lv = document.getElementById(`ex-${actualIdx}-s${s}-l-v`).value;
+                        const rv = document.getElementById(`ex-${actualIdx}-s${s}-r-v`).value;
+                        if(lv || rv) sets.push(`S${s}: L ${lv}/${document.getElementById(`ex-${actualIdx}-s${s}-l-z`).value}, R ${rv}/${document.getElementById(`ex-${actualIdx}-s${s}-r-z`).value}${aha}`);
                     } else {
-                        const v = document.getElementById(`ex-${idx}-s${i}-v`).value;
-                        const z = document.getElementById(`ex-${idx}-s${i}-z`).value;
-                        if(v) setsData.push(`S${i}: ${v}/${z}${aha}`);
+                        const v = document.getElementById(`ex-${actualIdx}-s${s}-v`).value;
+                        if(v) sets.push(`S${s}: ${v}/${document.getElementById(`ex-${actualIdx}-s${s}-z`).value}${aha}`);
                     }
                 }
-                const note = document.getElementById(`ex-${idx}-note`).value;
-                exLog.push(`${ex.name}: ${setsData.join(' | ')} ${note ? '('+note+')' : ''}`);
+                if(sets.length) log += `${ex.name}: ${sets.join(' | ')} (${document.getElementById(`ex-${actualIdx}-note`).value})\n`;
             });
 
-            const fullLog = `[REGISTERED_LOG: SPRINT_2_APP_SPEC_V1.1]
-Date/Time: ${new Date().toLocaleString()}
-I. Pre-Workout SSP: ${preSSP}
-Notes: ${document.getElementById('pre-notes').value || 'None'}
-II. Workout Report: ${workout.type} (${workout.focus})
-Warmup: ${document.getElementById('warmup-check').checked ? 'DONE' : 'SKIPPED'}
-${exLog.join('\n')}
-III. Post-Workout Report
-Notes: ${document.getElementById('post-notes').value || 'None'}
-Post-Workout SSP: ${postSSP}
-MG Status: ${document.getElementById('mg-shield').value} (1-5 Shield Gauge)`;
+            log += `\nIII. POST: ${getSSP('post')}
+MG Shield: ${document.getElementById('mg-shield').value}
+Session Notes: ${document.getElementById('post-notes').value || 'N/A'}`;
 
-            let logs = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
-            logs.unshift(fullLog);
-            localStorage.setItem('david_s2_archive', JSON.stringify(logs));
+            let arc = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
+            arc.unshift(log);
+            localStorage.setItem('david_s2_archive', JSON.stringify(arc));
             location.reload();
         }
 
         function loadHistory() {
             const logs = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
-            const container = document.getElementById('history-container');
-            container.innerHTML = logs.map((l, i) => `
-                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap relative border-slate-800">
-                    <button onclick="deleteLog(${i})" class="absolute top-2 right-2 text-rose-900 opacity-50 font-black">DEL</button>
-                    ${l.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+            document.getElementById('history-container').innerHTML = logs.map((l, i) => `
+                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap border-slate-800">
+                    ${l.replace(/</g, '&lt;')}
                 </div>
             `).join('');
-        }
-
-        function deleteLog(i) {
-            if(!confirm("Delete?")) return;
-            let logs = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
-            logs.splice(i, 1);
-            localStorage.setItem('david_s2_archive', JSON.stringify(logs));
-            loadHistory();
         }
 
         function copyAllLogs() {
