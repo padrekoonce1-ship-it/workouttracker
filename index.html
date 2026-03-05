@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprint 2 V1.2 - Mobility & Skills</title>
+    <title>Sprint 2 V1.3 - Strength & Alignment (Biphasic)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #020617; color: #f1f5f9; font-family: ui-sans-serif, system-ui, sans-serif; }
@@ -31,15 +31,15 @@
 
     <header class="mb-6 flex justify-between items-end">
         <div>
-            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 2 • V1.2</h1>
-            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Mobility & Skills</h2>
+            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 2 • V1.3 (Biphasic)</h1>
+            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Strength & Alignment</h2>
         </div>
         <div id="current-date" class="text-[10px] font-mono bg-slate-800 px-2 py-1 rounded text-slate-400"></div>
     </header>
 
     <nav class="flex border-b border-slate-800 mb-6 sticky top-0 bg-[#020617]/95 backdrop-blur-sm z-30">
         <button id="nav-session" class="flex-1 py-4 text-xs font-black tab-active" onclick="showTab('session')">SESSION</button>
-        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">ARCHIVE</button>
+        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">LOG ARCHIVE</button>
     </nav>
 
     <main id="view-session">
@@ -49,23 +49,23 @@
             <h3 class="text-xs font-black mb-4 tracking-widest text-sky-400">I. PRE-WORKOUT SSP AUDIT</h3>
             <div id="pre-ssp-container" class="space-y-8"></div>
             <div class="mt-6 pt-4 border-t border-slate-800">
-                <textarea id="pre-notes" rows="1" placeholder="Mindset / Readiness..."></textarea>
+                <textarea id="pre-notes" rows="1" placeholder="Mindset Baseline..."></textarea>
             </div>
         </section>
 
         <!-- SECTION II: WORKOUT BLOCKS -->
         <section class="card border-t-2 border-t-emerald-500">
-            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400">II. WORKOUT REPORT</h3>
+            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400">II. TACTICAL SPECS (BIPHASIC)</h3>
             
-            <div class="block-header">
-                <h4 class="text-[10px] font-black text-sky-400 uppercase">Block 1: Ankle & Hips</h4>
+            <div class="block-header border-sky-400">
+                <h4 class="text-[10px] font-black text-sky-400 uppercase">Phase 1: The Foundation (AM)</h4>
             </div>
-            <div id="block-1-list" class="space-y-10"></div>
+            <div id="phase-1-list" class="space-y-10"></div>
 
-            <div class="block-header">
-                <h4 class="text-[10px] font-black text-sky-400 uppercase">Block 2: Skills & Compression</h4>
+            <div class="block-header border-indigo-400">
+                <h4 class="text-[10px] font-black text-indigo-400 uppercase">Phase 2: The Lockdown (PM)</h4>
             </div>
-            <div id="block-2-list" class="space-y-10"></div>
+            <div id="phase-2-list" class="space-y-10"></div>
         </section>
 
         <!-- SECTION III: POST-WORKOUT -->
@@ -82,18 +82,18 @@
             </div>
             <div id="post-ssp-container" class="space-y-8"></div>
             <div class="mt-8">
-                <textarea id="post-notes" rows="3" placeholder="Session Notes (Vibe, Lasagna Energy, etc.)"></textarea>
+                <textarea id="post-notes" rows="3" placeholder="Aha! moments and Vibes..."></textarea>
             </div>
         </section>
 
         <button onclick="submitSession()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-900/20 uppercase tracking-[0.2em] text-sm transition-all active:scale-95 mb-12">
-            Register Sprint 2 Log
+            Register Biphasic Log
         </button>
     </main>
 
     <main id="view-history" class="hidden space-y-4">
         <div id="history-container" class="space-y-4"></div>
-        <button onclick="copyAllLogs()" class="w-full py-4 bg-slate-800 text-xs font-bold rounded-xl uppercase">Copy All Data</button>
+        <button onclick="copyAllLogs()" class="w-full py-4 bg-slate-800 text-xs font-bold rounded-xl uppercase">Copy Data Archive</button>
     </main>
 
     <script>
@@ -104,13 +104,13 @@
         };
 
         const todayWorkout = {
-            block1: [
-                { name: 'Ankle Wall Drives', bench: '3x10-12 (5.5" Cap)', null: 'Heel Lift / Knee Cave', cue: 'Short Foot → Medial Pull', recovery: 'Seated Knee Int. Rotation', bilateral: true },
-                { name: 'Deep Squat Holds', bench: '3x45-60s', null: 'Butt-Wink / Weight Shift Out', cue: 'Pelvis is a Bowl of Water', recovery: 'Box Breathing (4-4-4-4)' }
+            phase1: [
+                { name: 'Scapular Pull-ups', bench: '3x8-10 (2-3-1 Tempo)', null: 'Elbow Bend / Rib Flare', cue: 'Rib-Knit + Shoulder Pocket', recovery: 'Wrist Waves', bilateral: false },
+                { name: 'Banded Leg Alignment', bench: '3x45-60s (Silent Sanctuary)', null: 'Knee Cave / Lost 90°', cue: 'Short Foot → Medial → Glute', recovery: 'Short Foot Pulses', bilateral: false }
             ],
-            block2: [
-                { name: 'Planche Leans', bench: '3x15-20s', null: 'Scap Winging / Elbow Bend', cue: 'Protraction Priority', recovery: 'Grip-Flush (Reverse Prayer)' },
-                { name: 'Crow Pose Toe-Taps', bench: '3x5-8 Tap ea.', null: 'Head Drop / Tricep Gap', cue: 'The Teeter-Totter Weight Shift', recovery: 'Wrist Flossing', bilateral: true }
+            phase2: [
+                { name: 'Hollow Body Holds', bench: '3x30s (Leverage Ladder)', null: 'Lumbar Light / Arching', cue: '90° → 135° → Full Ext.', recovery: 'Belly Breathing', bilateral: false },
+                { name: 'Superman Holds', bench: '3x45s (Length > Height)', null: 'L-Back Pinch / Breath Hold', cue: 'Reach Walls, Not Ceiling', recovery: "Child's Pose", bilateral: false }
             ]
         };
 
@@ -118,8 +118,8 @@
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
             renderJointMatrices('pre');
             renderJointMatrices('post');
-            renderBlock('block-1-list', todayWorkout.block1, 0);
-            renderBlock('block-2-list', todayWorkout.block2, 10);
+            renderBlock('phase-1-list', todayWorkout.phase1, 'p1');
+            renderBlock('phase-2-list', todayWorkout.phase2, 'p2');
             loadHistory();
         }
 
@@ -157,31 +157,26 @@
             display.className = `text-[10px] font-black ${val==0?'text-emerald-400':val==3?'text-red-500':'text-yellow-400'}`;
         }
 
-        function renderBlock(elementId, exercises, baseIdx) {
+        function renderBlock(elementId, exercises, blockKey) {
             const container = document.getElementById(elementId);
             exercises.forEach((ex, idx) => {
-                const globalIdx = baseIdx + idx;
+                const idPrefix = `${blockKey}-${idx}`;
                 const div = document.createElement('div');
                 div.className = "space-y-4";
                 
                 let setInputs = '';
                 for(let s=1; s<=4; s++) {
-                    if(ex.bilateral) {
-                        setInputs += `
-                        <div class="grid grid-cols-4 gap-2 items-center">
-                            <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
-                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-l-v" placeholder="L" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-l-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
-                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-r-v" placeholder="R" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-r-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
-                            <div class="flex justify-center"><input type="checkbox" id="ex-${globalIdx}-s${s}-aha" class="gold-check"></div>
-                        </div>`;
-                    } else {
-                        setInputs += `
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
-                            <div class="flex gap-1"><input type="number" id="ex-${globalIdx}-s${s}-v" placeholder="Val" class="w-1/2 p-1 text-center"><input type="number" id="ex-${globalIdx}-s${s}-z" placeholder="0" class="w-1/2 p-1 text-center zero-input"></div>
-                            <div class="flex justify-center"><input type="checkbox" id="ex-${globalIdx}-s${s}-aha" class="gold-check"></div>
-                        </div>`;
-                    }
+                    setInputs += `
+                    <div class="grid grid-cols-3 gap-2 items-center">
+                        <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
+                        <div class="flex gap-1">
+                            <input type="number" id="${idPrefix}-s${s}-v" placeholder="Val" class="w-1/2 p-1 text-center">
+                            <input type="number" id="${idPrefix}-s${s}-z" placeholder="0" class="w-1/2 p-1 text-center zero-input">
+                        </div>
+                        <div class="flex justify-center">
+                            <input type="checkbox" id="${idPrefix}-s${s}-aha" class="gold-check">
+                        </div>
+                    </div>`;
                 }
 
                 div.innerHTML = `
@@ -191,12 +186,11 @@
                             <span class="text-sky-400 font-bold uppercase">Cue: ${ex.cue}</span>
                             <span class="text-emerald-500 uppercase font-bold">Goal: ${ex.bench}</span>
                             <span class="text-rose-500 uppercase font-bold">Null: ${ex.null}</span>
-                            <span class="text-slate-500 uppercase">Recovery: ${ex.recovery}</span>
                         </div>
                     </div>
-                    ${ex.bilateral ? `<div class="grid grid-cols-4 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>L: R/Z</div><div>R: R/Z</div><div>Aha</div></div>` : `<div class="grid grid-cols-3 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>Score/Zero</div><div>Aha</div></div>`}
+                    <div class="grid grid-cols-3 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>Rec/Zero</div><div>Aha</div></div>
                     ${setInputs}
-                    <textarea id="ex-${globalIdx}-note" rows="1" placeholder="Feel / Progress..." class="text-[10px] opacity-40"></textarea>
+                    <textarea id="${idPrefix}-note" rows="1" placeholder="Feel..." class="text-[10px] opacity-40"></textarea>
                 `;
                 container.appendChild(div);
             });
@@ -224,54 +218,77 @@
         }
 
         function submitSession() {
-            let log = `[REGISTERED_LOG: SPRINT_2_V1.2]
+            try {
+                let log = `[REGISTERED_LOG: SPRINT_2_V1.3_BIPHASIC]
 Date: ${new Date().toLocaleString()}
 I. PRE: ${getSSP('pre')}
 Notes: ${document.getElementById('pre-notes').value || 'N/A'}
 
 II. WORKOUT REPORT
-Warmup: ${document.getElementById('warmup-check').checked ? 'DONE' : 'SKIPPED'}\n`;
+`;
 
-            [...todayWorkout.block1, ...todayWorkout.block2].forEach((ex, idx) => {
-                let actualIdx = idx < todayWorkout.block1.length ? idx : idx + 10 - todayWorkout.block1.length;
-                let sets = [];
-                for(let s=1; s<=4; s++) {
-                    const aha = document.getElementById(`ex-${actualIdx}-s${s}-aha`).checked ? "★" : "";
-                    if(ex.bilateral) {
-                        const lv = document.getElementById(`ex-${actualIdx}-s${s}-l-v`).value;
-                        const rv = document.getElementById(`ex-${actualIdx}-s${s}-r-v`).value;
-                        if(lv || rv) sets.push(`S${s}: L ${lv}/${document.getElementById(`ex-${actualIdx}-s${s}-l-z`).value}, R ${rv}/${document.getElementById(`ex-${actualIdx}-s${s}-r-z`).value}${aha}`);
-                    } else {
-                        const v = document.getElementById(`ex-${actualIdx}-s${s}-v`).value;
-                        if(v) sets.push(`S${s}: ${v}/${document.getElementById(`ex-${actualIdx}-s${s}-z`).value}${aha}`);
+                // Phase 1 Extraction
+                todayWorkout.phase1.forEach((ex, idx) => {
+                    let sets = [];
+                    for(let s=1; s<=4; s++) {
+                        const aha = document.getElementById(`p1-${idx}-s${s}-aha`).checked ? "★" : "";
+                        const v = document.getElementById(`p1-${idx}-s${s}-v`).value;
+                        const z = document.getElementById(`p1-${idx}-s${s}-z`).value || 0;
+                        if(v) sets.push(`S${s}: ${v}/${z}${aha}`);
                     }
-                }
-                if(sets.length) log += `${ex.name}: ${sets.join(' | ')} (${document.getElementById(`ex-${actualIdx}-note`).value})\n`;
-            });
+                    if(sets.length) log += `${ex.name} (AM): ${sets.join(' | ')} [${document.getElementById(`p1-${idx}-note`).value}]\n`;
+                });
 
-            log += `\nIII. POST: ${getSSP('post')}
+                // Phase 2 Extraction
+                todayWorkout.phase2.forEach((ex, idx) => {
+                    let sets = [];
+                    for(let s=1; s<=4; s++) {
+                        const aha = document.getElementById(`p2-${idx}-s${s}-aha`).checked ? "★" : "";
+                        const v = document.getElementById(`p2-${idx}-s${s}-v`).value;
+                        const z = document.getElementById(`p2-${idx}-s${s}-z`).value || 0;
+                        if(v) sets.push(`S${s}: ${v}/${z}${aha}`);
+                    }
+                    if(sets.length) log += `${ex.name} (PM): ${sets.join(' | ')} [${document.getElementById(`p2-${idx}-note`).value}]\n`;
+                });
+
+                log += `\nIII. POST: ${getSSP('post')}
 MG Shield: ${document.getElementById('mg-shield').value}
 Session Notes: ${document.getElementById('post-notes').value || 'N/A'}`;
 
-            let arc = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
-            arc.unshift(log);
-            localStorage.setItem('david_s2_archive', JSON.stringify(arc));
-            location.reload();
+                let arc = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
+                arc.unshift(log);
+                localStorage.setItem('david_s2_archive', JSON.stringify(arc));
+                
+                alert("Log Registered Successfully.");
+                location.reload();
+            } catch (e) {
+                console.error(e);
+                alert("Critical error saving log. Check console.");
+            }
         }
 
         function loadHistory() {
             const logs = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
             document.getElementById('history-container').innerHTML = logs.map((l, i) => `
-                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap border-slate-800">
+                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap border-slate-800 relative">
+                    <button onclick="deleteLog(${i})" class="absolute top-2 right-2 text-rose-500 opacity-30 text-[8px]">DEL</button>
                     ${l.replace(/</g, '&lt;')}
                 </div>
             `).join('');
         }
 
+        function deleteLog(i) {
+            if(!confirm("Delete entry?")) return;
+            let arc = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
+            arc.splice(i, 1);
+            localStorage.setItem('david_s2_archive', JSON.stringify(arc));
+            loadHistory();
+        }
+
         function copyAllLogs() {
             const logs = JSON.parse(localStorage.getItem('david_s2_archive') || '[]');
             navigator.clipboard.writeText(logs.join('\n\n---\n\n'));
-            alert("Copied.");
+            alert("Copied to clipboard.");
         }
 
         init();
