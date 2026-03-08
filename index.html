@@ -2,198 +2,326 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2026 Block 1 Circuit</title>
-    
-    <!-- PWA Manifest Inline (for compatibility) -->
-    <link rel="manifest" href="data:application/manifest+json,{'name':'2026 Workout','short_name':'Workout','start_url':'.','display':'standalone','background_color':'#000000','theme_color':'#3b82f6','icons':[{'src':'https://cdn-icons-png.flaticon.com/512/2964/2964514.png','sizes':'512x512','type':'image/png'}]}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint 3 - Structural Hardening (LOCKED)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-        .card { background: #111; border: 1px solid #222; }
-        .slider {
-            -webkit-appearance: none; width: 100%; height: 8px;
-            border-radius: 5px; background: #333; outline: none;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 24px; height: 24px;
-            border-radius: 50%; background: #3b82f6; cursor: pointer;
-        }
-        .btn-toggle { transition: all 0.2s ease; }
-        .selected-yes { background-color: #ef4444 !important; color: white; border-color: #ef4444; }
-        .selected-no { background-color: #22c55e !important; color: white; border-color: #22c55e; }
-        /* Hide scrollbar but keep functionality */
-        ::-webkit-scrollbar { display: none; }
+        body { background-color: #020617; color: #f1f5f9; font-family: ui-sans-serif, system-ui, sans-serif; }
+        .tab-active { border-bottom: 2px solid #38bdf8; color: #38bdf8; font-weight: 900; }
+        .card { background-color: #0f172a; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid #1e293b; transition: all 0.3s; }
+        
+        /* Tactical Toggle for Session Types */
+        .type-toggle { display: flex; background: #1e293b; border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 1.5rem; }
+        .type-btn { flex: 1; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; color: #64748b; transition: all 0.2s; }
+        .type-btn.active { background: #020617; color: #38bdf8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+
+        .btn-toggle { padding: 0.5rem; border-radius: 0.4rem; background: #1e293b; font-size: 0.65rem; transition: all 0.2s; cursor: pointer; text-align: center; border: 1px solid transparent; font-weight: 600; color: #94a3b8; }
+        .btn-toggle.active { background: #38bdf8; color: #020617; font-weight: 900; border-color: #7dd3fc; }
+        
+        input, textarea { background: #020617; border: 1px solid #1e293b; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
+        label { display: block; margin-bottom: 0.35rem; font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+        
+        /* Adjusted Slider Width to prevent accidental scroll touches */
+        .slider-container { width: 85%; margin-right: auto; }
+        .pain-slider { -webkit-appearance: none; height: 6px; border-radius: 5px; outline: none; width: 100%; }
+        .pain-0 { background: #22c55e !important; }
+        .pain-1, .pain-2 { background: #eab308 !important; }
+        .pain-3 { background: #ef4444 !important; }
+        .pain-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #0f172a; }
+
+        .zero-input { color: #ef4444; font-weight: 800; border-color: #450a0a; }
+        .gold-check { width: 1.25rem; height: 1.25rem; accent-color: #fbbf24; cursor: pointer; }
+        .block-header { border-left: 4px solid #38bdf8; padding-left: 0.75rem; margin-top: 2rem; margin-bottom: 1rem; }
+        
+        .ssp-matrix-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 0.75rem; }
+        .matrix-col { display: flex; flex-direction: column; gap: 0.25rem; }
     </style>
 </head>
-<body class="p-4 pb-32 md:max-w-lg md:mx-auto">
+<body class="max-w-md mx-auto p-4 pb-32">
 
     <header class="mb-6 flex justify-between items-end">
         <div>
-            <h1 class="text-2xl font-black text-blue-500 tracking-tighter italic">CIRCUIT LOG</h1>
-            <p id="current-date" class="text-zinc-500 font-mono text-[10px] uppercase"></p>
+            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 3 • #LOCKED</h1>
+            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Structural Hardening</h2>
         </div>
-        <div id="routine-indicator" class="px-3 py-1 bg-zinc-800 rounded-full text-[10px] font-bold text-zinc-400 border border-zinc-700"></div>
+        <div id="current-date" class="text-[10px] font-mono bg-slate-800 px-2 py-1 rounded text-slate-400"></div>
     </header>
 
-    <!-- Readiness & Knee Check -->
-    <section class="card rounded-2xl p-5 mb-6">
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div>
-                <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">MG Fatigue</label>
-                <input type="range" min="1" max="5" value="1" class="slider" id="mg-fatigue">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold mb-2 uppercase text-zinc-500">Readiness</label>
-                <input type="range" min="1" max="5" value="5" class="slider" id="readiness">
-            </div>
-        </div>
-
-        <div class="pt-4 border-t border-zinc-800">
-            <label class="block text-[10px] font-bold mb-3 uppercase text-zinc-500">Right Knee Pain?</label>
-            <div class="flex space-x-2">
-                <button onclick="setKneePain(false)" id="knee-no" class="btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 selected-no text-xs">NO</button>
-                <button onclick="setKneePain(true)" id="knee-yes" class="btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs">YES</button>
-            </div>
-            <div id="knee-notes-container" class="hidden mt-3">
-                <textarea id="knee-notes" placeholder="Pain details..." class="w-full bg-zinc-950 border border-red-900/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-600" rows="2"></textarea>
-            </div>
-        </div>
-    </section>
-
-    <!-- Circuit Container -->
-    <div id="circuit-list" class="space-y-10"></div>
-
-    <!-- Sticky Export -->
-    <div class="fixed bottom-0 left-0 right-0 p-4 bg-black/90 backdrop-blur-lg border-t border-zinc-800 md:max-w-lg md:mx-auto z-50">
-        <button onclick="exportLog()" class="w-full py-4 bg-blue-600 text-white font-black rounded-2xl uppercase text-sm shadow-lg shadow-blue-900/20 active:scale-95 transition-transform">
-            Export Master Log
-        </button>
-        <p id="status-msg" class="text-center text-[10px] text-green-500 font-mono mt-2 hidden">COPIED TO CLIPBOARD</p>
+    <div class="type-toggle">
+        <button id="type-strength" class="type-btn active" onclick="switchSessionType('S&A')">STRENGTH & ALIGNMENT</button>
+        <button id="type-mobility" class="type-btn" onclick="switchSessionType('M&S')">MOBILITY & SKILLS</button>
     </div>
 
+    <nav class="flex border-b border-slate-800 mb-6 sticky top-0 bg-[#020617]/95 backdrop-blur-sm z-30">
+        <button id="nav-session" class="flex-1 py-4 text-xs font-black tab-active" onclick="showTab('session')">SESSION LOG</button>
+        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">FIRMWARE ARCHIVE</button>
+    </nav>
+
+    <main id="view-session">
+        <!-- SECTION I: PRE-WORKOUT SSP -->
+        <section class="card border-t-2 border-t-sky-500">
+            <h3 class="text-xs font-black mb-4 tracking-widest text-sky-400">I. SSP AUDIT (PRE)</h3>
+            <div id="pre-ssp-container" class="space-y-8"></div>
+        </section>
+
+        <!-- SECTION II: WORKOUT BLOCKS -->
+        <section class="card border-t-2 border-t-emerald-500">
+            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400">II. GYMGINEER SPECS</h3>
+            
+            <div class="block-header border-sky-400">
+                <h4 class="text-[10px] font-black text-sky-400 uppercase">Phase 1: Foundation Anchor</h4>
+            </div>
+            <div id="phase-1-list" class="space-y-10"></div>
+
+            <div class="block-header border-indigo-400">
+                <h4 class="text-[10px] font-black text-indigo-400 uppercase">Phase 2: Lockdown Extension</h4>
+            </div>
+            <div id="phase-2-list" class="space-y-10"></div>
+
+            <!-- Global Alignment Flag -->
+            <div class="mt-8 pt-4 border-t border-slate-800">
+                <label class="text-[9px]">Metro Reflection Progress</label>
+                <div class="flex items-center gap-3 bg-slate-900/50 p-3 rounded-lg">
+                    <input type="checkbox" id="postural-default" class="gold-check">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Postural Default: Full Back Contact Maintained</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION III: POST-WORKOUT -->
+        <section class="card border-t-2 border-t-rose-500">
+            <h3 class="text-xs font-black mb-4 tracking-widest text-rose-400">III. SSP AUDIT (POST)</h3>
+            <div class="mb-8 bg-slate-900/40 p-4 rounded-xl">
+                <label class="text-sky-400 text-[9px]">MG Status (The Shield)</label>
+                <div class="slider-container">
+                    <input type="range" id="mg-shield" min="1" max="5" value="1" class="accent-sky-500 mt-2 w-full" oninput="document.getElementById('shield-val').innerText = this.value">
+                </div>
+                <div class="flex justify-between text-[8px] font-bold mt-1 uppercase text-slate-500 w-[85%]">
+                    <span>1: Full Power</span>
+                    <span id="shield-val" class="text-sky-400">1</span>
+                    <span>5: Symptom</span>
+                </div>
+            </div>
+            <div id="post-ssp-container" class="space-y-8"></div>
+            <textarea id="post-notes" rows="3" class="mt-6" placeholder="Biphasic split notes / Integrity hurdles..."></textarea>
+        </section>
+
+        <button onclick="submitSession()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-900/20 uppercase tracking-[0.2em] text-sm transition-all active:scale-95 mb-12">
+            Register Sprint 3 #LOCKED
+        </button>
+    </main>
+
+    <main id="view-history" class="hidden space-y-4"></main>
+
     <script>
-        const routines = {
-            strength: {
-                title: "Strength & Alignment",
-                exercises: [
-                    { name: "Scapular Pull-ups", target: "10 Reps" },
-                    { name: "Hollow Body Holds", target: "30-45s" },
-                    { name: "Banded Leg Alignment", target: "15 Reps" }
+        const joints = ['Shoulder', 'Elbow', 'Knee'];
+        const sspOptions = {
+            Sound: ['Silent', 'Pop', 'Click', 'Grit'],
+            Sensation: ['Smooth', 'Slip', 'Tight', 'Unstable']
+        };
+
+        const movementDB = {
+            'S&A': {
+                phase1: [
+                    { name: 'Banded Leg Alignment', metric: 'Duration (s)', constraint: '90° hold; Short Foot/Medial Pull' },
+                    { name: 'Scapular Pull-ups', metric: 'Reps', constraint: '12 max; Zero elbow flexion' },
+                    { name: 'Inverted Rows', metric: 'Reps', constraint: 'Chest-to-bar; 1s squeeze' }
                 ],
-                rounds: 3
+                phase2: [
+                    { name: 'Hollow Body Hold', metric: 'Duration (s)', constraint: '180° extension; Lumbar flush' },
+                    { name: 'Superman Hold', metric: 'Duration (s)', constraint: 'Posterior chain lock' }
+                ]
             },
-            mobility: {
-                title: "Mobility & Skill",
-                exercises: [
-                    { name: "Planche Leans", target: "Max Lean" },
-                    { name: "Hip Mobility (90/90)", target: "1m/side" },
-                    { name: "Ankle Mobility", target: "15r/side" }
+            'M&S': {
+                phase1: [
+                    { name: 'Ankle Wall Drives', metric: 'Reps/Range', constraint: '5.5" cap; No band' },
+                    { name: '90/90 Hip Openers', metric: 'Duration (s)', constraint: 'Symmetry check (L/R)' }
                 ],
-                rounds: 3
+                phase2: [
+                    { name: 'Crow Pose', metric: 'Float Time (s)', constraint: 'Lean/Protraction focus' },
+                    { name: 'Planche Leans', metric: 'Duration (s)', constraint: 'Scapular protraction' }
+                ]
             }
         };
 
-        let currentType = 'strength';
-        let hasKneePain = false;
+        let currentType = 'S&A';
 
         function init() {
-            const day = new Date().getDay();
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-            currentType = [0, 2, 4].includes(day) ? 'strength' : 'mobility';
-            document.getElementById('routine-indicator').innerText = routines[currentType].title;
-            renderCircuit();
-            registerServiceWorker();
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
+            renderJointMatrices('pre');
+            renderJointMatrices('post');
+            renderWorkout(currentType);
+            loadHistory();
         }
 
-        function setKneePain(val) {
-            hasKneePain = val;
-            document.getElementById('knee-yes').className = val ? 'btn-toggle flex-1 py-3 rounded-xl font-bold selected-yes text-xs' : 'btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs';
-            document.getElementById('knee-no').className = !val ? 'btn-toggle flex-1 py-3 rounded-xl font-bold selected-no text-xs' : 'btn-toggle flex-1 py-3 rounded-xl border border-zinc-700 font-bold bg-zinc-900 text-xs';
-            document.getElementById('knee-notes-container').style.display = val ? 'block' : 'none';
+        function switchSessionType(type) {
+            currentType = type;
+            document.getElementById('type-strength').classList.toggle('active', type === 'S&A');
+            document.getElementById('type-mobility').classList.toggle('active', type === 'M&S');
+            renderWorkout(type);
         }
 
-        function renderCircuit() {
-            const container = document.getElementById('circuit-list');
-            const data = routines[currentType];
-            let html = "";
+        function renderWorkout(type) {
+            document.getElementById('phase-1-list').innerHTML = '';
+            document.getElementById('phase-2-list').innerHTML = '';
+            renderBlock('phase-1-list', movementDB[type].phase1, 'p1');
+            renderBlock('phase-2-list', movementDB[type].phase2, 'p2');
+        }
 
-            for (let r = 1; r <= data.rounds; r++) {
-                html += `
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 px-1">
-                            <span class="h-px flex-1 bg-zinc-800"></span>
-                            <h2 class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">Round ${r}</h2>
-                            <span class="h-px flex-1 bg-zinc-800"></span>
-                        </div>
-                        ${data.exercises.map((ex, exIdx) => `
-                            <div class="card rounded-2xl p-4">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <h3 class="text-sm font-bold text-white">${ex.name}</h3>
-                                        <p class="text-[10px] text-zinc-500 uppercase font-bold">${ex.target}</p>
-                                    </div>
-                                    <input type="checkbox" class="round-check" data-round="${r}" data-ex="${ex.name}">
-                                </div>
-                                <input type="text" placeholder="Notes for this set..." 
-                                    class="round-note w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-400 focus:outline-none focus:border-blue-900"
-                                    data-round="${r}" data-ex="${ex.name}">
-                            </div>
-                        `).join('')}
+        function renderJointMatrices(phase) {
+            const container = document.getElementById(`${phase}-ssp-container`);
+            joints.forEach(joint => {
+                const div = document.createElement('div');
+                div.className = "space-y-3";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2">
+                        <span class="text-[10px] font-black tracking-tighter text-slate-400 uppercase">${joint} Audit</span>
+                        <span id="${phase}-${joint}-pain-val" class="text-[10px] font-black text-emerald-400">0</span>
+                    </div>
+                    <div class="ssp-matrix-grid">
+                        <div class="matrix-col"><div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sound">
+                            ${sspOptions.Sound.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
+                        </div></div>
+                        <div class="matrix-col"><div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sens">
+                            ${sspOptions.Sensation.map((s,i) => `<button class="btn-toggle ${i===0?'active':''}" onclick="setToggle(this)">${s}</button>`).join('')}
+                        </div></div>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="3" value="0" id="${phase}-${joint}-pain-slider" class="pain-slider pain-0 mt-2" oninput="updatePainSlider(this, '${phase}-${joint}-pain-val')">
                     </div>
                 `;
-            }
-            container.innerHTML = html;
-        }
-
-        function exportLog() {
-            const date = new Date().toISOString().split('T')[0];
-            const mg = document.getElementById('mg-fatigue').value;
-            const ready = document.getElementById('readiness').value;
-            const knee = hasKneePain ? `YES (${document.getElementById('knee-notes').value})` : "NO";
-            
-            let workoutSummary = [];
-            document.querySelectorAll('.round-check').forEach((check, i) => {
-                if(check.checked) {
-                    const note = document.querySelectorAll('.round-note')[i].value;
-                    workoutSummary.push(`R${check.dataset.round} ${check.dataset.ex}${note ? ' ('+note+')' : ''}`);
-                }
+                container.appendChild(div);
             });
-
-            const output = `DATE: ${date} | MG: ${mg} | READY: ${ready} | KNEE: ${knee} | LOG: ${workoutSummary.join('; ')}`;
-            
-            const el = document.createElement('textarea');
-            el.value = output;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-
-            const msg = document.getElementById('status-msg');
-            msg.classList.remove('hidden');
-            setTimeout(() => msg.classList.add('hidden'), 3000);
         }
 
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
+        function updatePainSlider(el, valId) {
+            const val = el.value;
+            const display = document.getElementById(valId);
+            display.innerText = val;
+            el.className = `pain-slider pain-${val} mt-2`;
+            display.className = `text-[10px] font-black ${val==0?'text-emerald-400':val==3?'text-red-500':'text-yellow-400'}`;
+        }
+
+        function renderBlock(elementId, exercises, blockKey) {
+            const container = document.getElementById(elementId);
+            exercises.forEach((ex, idx) => {
+                const idPrefix = `${blockKey}-${idx}`;
+                const div = document.createElement('div');
+                div.className = "space-y-4";
+                
+                let setInputs = '';
+                for(let s=1; s<=3; s++) {
+                    setInputs += `
+                    <div class="grid grid-cols-3 gap-2 items-center">
+                        <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
+                        <div class="flex gap-1">
+                            <input type="number" id="${idPrefix}-s${s}-v" placeholder="${ex.metric.includes('Duration')?'Sec':'Reps'}" class="w-1/2 p-1 text-center">
+                            <input type="number" id="${idPrefix}-s${s}-z" placeholder="0" class="w-1/2 p-1 text-center zero-input">
+                        </div>
+                        <div class="flex justify-center"><input type="checkbox" id="${idPrefix}-s${s}-aha" class="gold-check"></div>
+                    </div>`;
+                }
+
+                div.innerHTML = `
+                    <div class="border-b border-slate-800 pb-2">
+                        <h5 class="text-sm font-black text-slate-100 uppercase tracking-tight">${ex.name}</h5>
+                        <p class="text-[8px] text-rose-500 font-bold uppercase mt-1">Constraint: ${ex.constraint}</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>Metric/Zero</div><div>Aha</div></div>
+                    ${setInputs}
+                    <textarea id="${idPrefix}-perf-note" rows="1" placeholder="Performance Note (e.g. elbow flexed on set 2)..." class="text-[10px] opacity-60"></textarea>
                 `;
-                const blob = new Blob([swCode], {type: 'text/javascript'});
-                const url = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(url);
+                container.appendChild(div);
+            });
+        }
+
+        function setToggle(btn) {
+            btn.parentElement.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function showTab(tab) {
+            document.getElementById('view-session').classList.toggle('hidden', tab !== 'session');
+            document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('nav-session').classList.toggle('tab-active', tab === 'session');
+            document.getElementById('nav-history').classList.toggle('tab-active', tab === 'history');
+        }
+
+        function getSSP(phase) {
+            return joints.map(j => {
+                const s = document.getElementById(`${phase}-${j}-sound`).querySelector('.active').innerText;
+                const sen = document.getElementById(`${phase}-${j}-sens`).querySelector('.active').innerText;
+                const p = document.getElementById(`${phase}-${j}-pain-slider`).value;
+                return `${j}:[${s}/${sen}/P:${p}]`;
+            }).join(' | ');
+        }
+
+        function submitSession() {
+            try {
+                let log = `[REGISTERED_LOG: #Sprint3_${currentType.replace('&','_')}_LOCKED]
+Date: ${new Date().toISOString().split('T')[0]}
+Blueprint: Sprint 3 (Structural Hardening)
+Postural Default: ${document.getElementById('postural-default').checked ? 'MAINTAINED' : 'BREACHED'}
+
+I. PRE-SSP: ${getSSP('pre')}
+
+II. WORKOUT REPORT (BIPHASIC)`;
+
+                const blocks = [
+                    {key: 'p1', data: movementDB[currentType].phase1, label: 'PHASE 1 (FOUNDATION)'},
+                    {key: 'p2', data: movementDB[currentType].phase2, label: 'PHASE 2 (LOCKDOWN)'}
+                ];
+
+                blocks.forEach(block => {
+                    log += `\n\n--- ${block.label} ---`;
+                    block.data.forEach((ex, idx) => {
+                        let sets = [];
+                        for(let s=1; s<=3; s++) {
+                            const v = document.getElementById(`${block.key}-${idx}-s${s}-v`).value;
+                            const z = document.getElementById(`${block.key}-${idx}-s${s}-z`).value || 0;
+                            const aha = document.getElementById(`${block.key}-${idx}-s${s}-aha`).checked ? "★" : "";
+                            if(v) sets.push(`S${s}:${v}/${z}${aha}`);
+                        }
+                        const pNote = document.getElementById(`${block.key}-${idx}-perf-note`).value;
+                        if(sets.length) log += `\n${ex.name}: ${sets.join(' | ')}${pNote ? ' | Note: '+pNote : ''}`;
+                    });
+                });
+
+                log += `\n\nIII. POST-SSP: ${getSSP('post')}
+MG Shield: ${document.getElementById('mg-shield').value}
+Notes: ${document.getElementById('post-notes').value || 'N/A'}`;
+
+                let arc = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+                arc.unshift(log);
+                localStorage.setItem('david_s3_archive', JSON.stringify(arc));
+                
+                alert("Sprint 3 Data Registered. #LOCKED");
+                location.reload();
+            } catch (e) {
+                console.error(e);
+                alert("Error: " + e.message);
             }
+        }
+
+        function loadHistory() {
+            const logs = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+            document.getElementById('view-history').innerHTML = logs.map((l, i) => `
+                <div class="card p-3 font-mono text-[9px] whitespace-pre-wrap border-slate-800">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sky-500 font-bold">#Sprint3 Entry</span>
+                        <button onclick="deleteLog(${i})" class="text-rose-500 opacity-40">DEL</button>
+                    </div>
+                    ${l.replace(/</g, '&lt;')}
+                </div>
+            `).join('');
+        }
+
+        function deleteLog(i) {
+            if(!confirm("Erase log entry?")) return;
+            let arc = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+            arc.splice(i, 1);
+            localStorage.setItem('david_s3_archive', JSON.stringify(arc));
+            loadHistory();
         }
 
         init();
