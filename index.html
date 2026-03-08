@@ -12,14 +12,17 @@
         
         /* Tactical Toggle for Session Types */
         .type-toggle { display: flex; background: #1e293b; border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 1.5rem; }
-        .type-btn { flex: 1; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; color: #64748b; transition: all 0.2s; }
+        .type-btn { flex: 1; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; color: #94a3b8; transition: all 0.2s; }
         .type-btn.active { background: #020617; color: #38bdf8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
         .btn-toggle { padding: 0.5rem; border-radius: 0.4rem; background: #1e293b; font-size: 0.65rem; transition: all 0.2s; cursor: pointer; text-align: center; border: 1px solid transparent; font-weight: 600; color: #94a3b8; }
         .btn-toggle.active { background: #38bdf8; color: #020617; font-weight: 900; border-color: #7dd3fc; }
         
-        input, textarea { background: #020617; border: 1px solid #1e293b; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
-        label { display: block; margin-bottom: 0.35rem; font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+        input, textarea { background: #020617; border: 1px solid #334155; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 0.875rem; }
+        
+        /* Improved Contrast Labels */
+        label { display: block; margin-bottom: 0.35rem; font-size: 0.75rem; font-weight: 900; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.05em; }
+        .sub-label { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
         
         /* Adjusted Slider Width to prevent accidental scroll touches */
         .slider-container { width: 85%; margin-right: auto; }
@@ -27,11 +30,11 @@
         .pain-0 { background: #22c55e !important; }
         .pain-1, .pain-2 { background: #eab308 !important; }
         .pain-3 { background: #ef4444 !important; }
-        .pain-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #0f172a; }
+        .pain-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 3px solid #0f172a; }
 
-        .zero-input { color: #ef4444; font-weight: 800; border-color: #450a0a; }
-        .gold-check { width: 1.25rem; height: 1.25rem; accent-color: #fbbf24; cursor: pointer; }
-        .block-header { border-left: 4px solid #38bdf8; padding-left: 0.75rem; margin-top: 2rem; margin-bottom: 1rem; }
+        .zero-input { color: #f87171; font-weight: 800; border-color: #450a0a; }
+        .gold-check { width: 1.35rem; height: 1.35rem; accent-color: #fbbf24; cursor: pointer; }
+        .block-header { border-left: 4px solid #38bdf8; padding-left: 0.75rem; margin-top: 2rem; margin-bottom: 1rem; background: linear-gradient(to right, #1e293b, transparent); padding-top: 0.25rem; padding-bottom: 0.25rem; }
         
         .ssp-matrix-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 0.75rem; }
         .matrix-col { display: flex; flex-direction: column; gap: 0.25rem; }
@@ -66,44 +69,38 @@
 
         <!-- SECTION II: WORKOUT BLOCKS -->
         <section class="card border-t-2 border-t-emerald-500">
-            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400">II. GYMGINEER SPECS</h3>
+            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400 uppercase">II. Gymgineer Technical Specs</h3>
             
             <div class="block-header border-sky-400">
-                <h4 class="text-[10px] font-black text-sky-400 uppercase">Phase 1: Foundation Anchor</h4>
+                <h4 class="text-[10px] font-black text-sky-400 uppercase tracking-widest">Phase 1: Foundation Anchor</h4>
             </div>
             <div id="phase-1-list" class="space-y-10"></div>
 
             <div class="block-header border-indigo-400">
-                <h4 class="text-[10px] font-black text-indigo-400 uppercase">Phase 2: Lockdown Extension</h4>
+                <h4 class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Phase 2: Lockdown Extension</h4>
             </div>
             <div id="phase-2-list" class="space-y-10"></div>
-
-            <!-- Global Alignment Flag -->
-            <div class="mt-8 pt-4 border-t border-slate-800">
-                <label class="text-[9px]">Metro Reflection Progress</label>
-                <div class="flex items-center gap-3 bg-slate-900/50 p-3 rounded-lg">
-                    <input type="checkbox" id="postural-default" class="gold-check">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Postural Default: Full Back Contact Maintained</span>
-                </div>
-            </div>
         </section>
 
         <!-- SECTION III: POST-WORKOUT -->
         <section class="card border-t-2 border-t-rose-500">
             <h3 class="text-xs font-black mb-4 tracking-widest text-rose-400">III. SSP AUDIT (POST)</h3>
-            <div class="mb-8 bg-slate-900/40 p-4 rounded-xl">
-                <label class="text-sky-400 text-[9px]">MG Status (The Shield)</label>
+            <div class="mb-8 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                <label class="text-sky-400 text-[10px] mb-2">MG Status (The Shield)</label>
                 <div class="slider-container">
-                    <input type="range" id="mg-shield" min="1" max="5" value="1" class="accent-sky-500 mt-2 w-full" oninput="document.getElementById('shield-val').innerText = this.value">
+                    <input type="range" id="mg-shield" min="1" max="5" value="1" class="pain-slider pain-0 w-full" oninput="updatePainSlider(this, 'shield-val')">
                 </div>
-                <div class="flex justify-between text-[8px] font-bold mt-1 uppercase text-slate-500 w-[85%]">
+                <div class="flex justify-between text-[9px] font-black mt-2 uppercase text-slate-400 w-[85%]">
                     <span>1: Full Power</span>
-                    <span id="shield-val" class="text-sky-400">1</span>
+                    <span id="shield-val" class="text-sky-400 bg-sky-900/40 px-2 rounded">1</span>
                     <span>5: Symptom</span>
                 </div>
             </div>
             <div id="post-ssp-container" class="space-y-8"></div>
-            <textarea id="post-notes" rows="3" class="mt-6" placeholder="Biphasic split notes / Integrity hurdles..."></textarea>
+            <div class="mt-6">
+                <label>Integrity & Split Notes</label>
+                <textarea id="post-notes" rows="3" placeholder="Notes on Biphasic gap or integrity hurdles..."></textarea>
+            </div>
         </section>
 
         <button onclick="submitSession()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-900/20 uppercase tracking-[0.2em] text-sm transition-all active:scale-95 mb-12">
@@ -111,7 +108,7 @@
         </button>
     </main>
 
-    <main id="view-history" class="hidden space-y-4"></main>
+    <main id="view-history" class="hidden space-y-4 px-2"></main>
 
     <script>
         const joints = ['Shoulder', 'Elbow', 'Knee'];
@@ -174,9 +171,9 @@
                 const div = document.createElement('div');
                 div.className = "space-y-3";
                 div.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2">
-                        <span class="text-[10px] font-black tracking-tighter text-slate-400 uppercase">${joint} Audit</span>
-                        <span id="${phase}-${joint}-pain-val" class="text-[10px] font-black text-emerald-400">0</span>
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-1 mb-2">
+                        <span class="text-[11px] font-black tracking-tight text-slate-100 uppercase">${joint} Audit</span>
+                        <span id="${phase}-${joint}-pain-val" class="text-[11px] font-black text-emerald-400 bg-emerald-900/20 px-1.5 rounded">0</span>
                     </div>
                     <div class="ssp-matrix-grid">
                         <div class="matrix-col"><div class="grid grid-cols-2 gap-1" id="${phase}-${joint}-sound">
@@ -199,7 +196,11 @@
             const display = document.getElementById(valId);
             display.innerText = val;
             el.className = `pain-slider pain-${val} mt-2`;
-            display.className = `text-[10px] font-black ${val==0?'text-emerald-400':val==3?'text-red-500':'text-yellow-400'}`;
+            if (valId === 'shield-val') {
+                display.className = `text-[10px] font-black bg-sky-900/40 px-2 rounded text-sky-400`;
+            } else {
+                display.className = `text-[11px] font-black px-1.5 rounded ${val==0?'text-emerald-400 bg-emerald-900/20':val==3?'text-rose-400 bg-rose-900/40':'text-yellow-400 bg-yellow-900/40'}`;
+            }
         }
 
         function renderBlock(elementId, exercises, blockKey) {
@@ -207,15 +208,15 @@
             exercises.forEach((ex, idx) => {
                 const idPrefix = `${blockKey}-${idx}`;
                 const div = document.createElement('div');
-                div.className = "space-y-4";
+                div.className = "space-y-4 bg-slate-900/20 p-3 rounded-xl border border-slate-800/50";
                 
                 let setInputs = '';
                 for(let s=1; s<=3; s++) {
                     setInputs += `
                     <div class="grid grid-cols-3 gap-2 items-center">
-                        <span class="text-[9px] font-bold text-slate-700">SET ${s}</span>
+                        <span class="text-[10px] font-black text-slate-500">SET ${s}</span>
                         <div class="flex gap-1">
-                            <input type="number" id="${idPrefix}-s${s}-v" placeholder="${ex.metric.includes('Duration')?'Sec':'Reps'}" class="w-1/2 p-1 text-center">
+                            <input type="number" id="${idPrefix}-s${s}-v" placeholder="${ex.metric.includes('Duration')?'Sec':'Reps'}" class="w-1/2 p-1 text-center font-bold">
                             <input type="number" id="${idPrefix}-s${s}-z" placeholder="0" class="w-1/2 p-1 text-center zero-input">
                         </div>
                         <div class="flex justify-center"><input type="checkbox" id="${idPrefix}-s${s}-aha" class="gold-check"></div>
@@ -223,13 +224,18 @@
                 }
 
                 div.innerHTML = `
-                    <div class="border-b border-slate-800 pb-2">
-                        <h5 class="text-sm font-black text-slate-100 uppercase tracking-tight">${ex.name}</h5>
-                        <p class="text-[8px] text-rose-500 font-bold uppercase mt-1">Constraint: ${ex.constraint}</p>
+                    <div class="border-b border-slate-700 pb-2">
+                        <h5 class="text-sm font-black text-sky-100 uppercase tracking-tight">${ex.name}</h5>
+                        <p class="text-[9px] text-rose-400 font-black uppercase mt-1 leading-tight">Zero-Rep: ${ex.constraint}</p>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 text-[7px] font-black text-slate-600 text-center uppercase"><div></div><div>Metric/Zero</div><div>Aha</div></div>
+                    <div class="grid grid-cols-3 gap-2 text-[8px] font-black text-slate-400 text-center uppercase">
+                        <div></div><div>Metric / Zero</div><div>Aha!</div>
+                    </div>
                     ${setInputs}
-                    <textarea id="${idPrefix}-perf-note" rows="1" placeholder="Performance Note (e.g. elbow flexed on set 2)..." class="text-[10px] opacity-60"></textarea>
+                    <div class="pt-2">
+                        <label class="text-[9px] text-slate-400 mb-1">Performance Integrity Note</label>
+                        <textarea id="${idPrefix}-perf-note" rows="1" placeholder="Technical breach? (e.g. rep 4 elbow flexed)" class="text-[10px] opacity-80"></textarea>
+                    </div>
                 `;
                 container.appendChild(div);
             });
@@ -261,7 +267,6 @@
                 let log = `[REGISTERED_LOG: #Sprint3_${currentType.replace('&','_')}_LOCKED]
 Date: ${new Date().toISOString().split('T')[0]}
 Blueprint: Sprint 3 (Structural Hardening)
-Postural Default: ${document.getElementById('postural-default').checked ? 'MAINTAINED' : 'BREACHED'}
 
 I. PRE-SSP: ${getSSP('pre')}
 
