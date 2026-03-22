@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprint 3 - V1.2 (LOCKED)</title>
+    <title>Sprint 4 - Isometric Integration (WRAPPED)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #020617; color: #f1f5f9; font-family: ui-sans-serif, system-ui, sans-serif; }
@@ -17,21 +17,20 @@
         .btn-toggle { padding: 0.5rem; border-radius: 0.4rem; background: #1e293b; font-size: 0.65rem; transition: all 0.2s; cursor: pointer; text-align: center; border: 1px solid transparent; font-weight: 600; color: #94a3b8; }
         .btn-toggle.active { background: #38bdf8; color: #020617; font-weight: 900; border-color: #7dd3fc; }
         
-        /* Larger Text Inputs + Prevent iOS Zoom */
         input, textarea { background: #020617; border: 1px solid #334155; color: white; border-radius: 0.5rem; padding: 0.6rem; width: 100%; font-size: 16px; }
-        textarea { resize: vertical; min-height: 60px; border-bottom: 2px solid #334155; }
+        textarea { resize: vertical; min-height: 80px; border-bottom: 2px solid #334155; }
         
-        /* Improved Contrast Labels */
         label { display: block; margin-bottom: 0.35rem; font-size: 0.85rem; font-weight: 900; color: #f8fafc; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        /* Slider width constraint */
         .slider-container { width: 85%; margin-right: auto; }
         .pain-slider { -webkit-appearance: none; height: 8px; border-radius: 5px; outline: none; width: 100%; }
         
-        /* MG Shield & Pain Logic Fix: 1 is Green, High is Red */
-        .pain-0, .pain-1 { background: #22c55e !important; } /* Good */
-        .pain-2, .pain-3 { background: #eab308 !important; } /* Caution */
-        .pain-4, .pain-5 { background: #ef4444 !important; } /* Breach */
+        /* Fixed Logic: 1 (Full Power) is Green, 5 is Red */
+        .pain-0, .pain-1 { background: #22c55e !important; } 
+        .pain-2 { background: #84cc16 !important; }
+        .pain-3 { background: #eab308 !important; } 
+        .pain-4 { background: #f97316 !important; }
+        .pain-5 { background: #ef4444 !important; } 
 
         .pain-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 3px solid #0f172a; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
@@ -40,18 +39,20 @@
         .block-header { border-left: 4px solid #38bdf8; padding-left: 0.75rem; margin-top: 2rem; margin-bottom: 1rem; background: linear-gradient(to right, #1e293b, transparent); padding-top: 0.4rem; padding-bottom: 0.4rem; }
         
         .ssp-matrix-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 0.75rem; }
-        .matrix-col { display: flex; flex-direction: column; gap: 0.25rem; }
         
-        /* Indicator for resizable textareas */
         .resize-hint { font-size: 8px; color: #475569; text-align: right; margin-top: -12px; margin-right: 5px; pointer-events: none; }
+
+        #copy-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #38bdf8; color: #020617; padding: 10px 20px; border-radius: 20px; font-weight: 900; font-size: 12px; z-index: 100; display: none; }
     </style>
 </head>
 <body class="max-w-md mx-auto p-4 pb-32">
 
+    <div id="copy-toast">LOG COPIED TO CLIPBOARD</div>
+
     <header class="mb-6 flex justify-between items-end">
         <div>
-            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 3 • #LOCKED</h1>
-            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Structural Hardening</h2>
+            <h1 class="text-[10px] font-black text-sky-500 tracking-[0.3em] uppercase">Sprint 4 • #WRAPPED</h1>
+            <h2 id="routine-title" class="text-2xl font-bold tracking-tight">Isometric Integration</h2>
         </div>
         <div id="current-date" class="text-[10px] font-mono bg-slate-800 px-2 py-1 rounded text-slate-400"></div>
     </header>
@@ -63,7 +64,7 @@
 
     <nav class="flex border-b border-slate-800 mb-6 sticky top-0 bg-[#020617]/95 backdrop-blur-sm z-30">
         <button id="nav-session" class="flex-1 py-4 text-xs font-black tab-active" onclick="showTab('session')">SESSION LOG</button>
-        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">FIRMWARE ARCHIVE</button>
+        <button id="nav-history" class="flex-1 py-4 text-xs font-black text-slate-500" onclick="showTab('history')">ARCHIVE</button>
     </nav>
 
     <main id="view-session">
@@ -75,7 +76,7 @@
 
         <!-- SECTION II: WORKOUT BLOCKS -->
         <section class="card border-t-2 border-t-emerald-500">
-            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400 uppercase">II. Gymgineer Technical Specs</h3>
+            <h3 class="text-xs font-black mb-4 tracking-widest text-emerald-400 uppercase">II. Sprint 4 Technical Specs</h3>
             
             <div class="block-header border-sky-400">
                 <h4 class="text-[10px] font-black text-sky-400 uppercase tracking-widest">Phase 1: Foundation Anchor</h4>
@@ -105,13 +106,13 @@
             <div id="post-ssp-container" class="space-y-8"></div>
             <div class="mt-6">
                 <label>Integrity & Biphasic Notes</label>
-                <textarea id="post-notes" placeholder="Notes on technical breaches or split timing..."></textarea>
+                <textarea id="post-notes" placeholder="Notes on technical breaches or timing..."></textarea>
                 <div class="resize-hint">◢ Drag to expand</div>
             </div>
         </section>
 
         <button onclick="submitSession()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-900/20 uppercase tracking-[0.2em] text-sm transition-all active:scale-95 mb-12">
-            Register Sprint 3 #LOCKED
+            Register Sprint 4 #WRAPPED
         </button>
     </main>
 
@@ -152,7 +153,9 @@
         let currentType = 'S&A';
 
         function init() {
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-date').innerText = `${now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase()} @ ${timeStr}`;
             renderJointMatrices('pre');
             renderJointMatrices('post');
             renderWorkout(currentType);
@@ -268,7 +271,7 @@
                 div.innerHTML = `
                     <div class="border-b border-slate-700 pb-2 mb-2">
                         <h5 class="text-[15px] font-black text-white uppercase tracking-tight">${ex.name}</h5>
-                        <p class="text-[10px] text-rose-400 font-black uppercase mt-1 leading-tight">Constraint: ${ex.constraint}</p>
+                        <p class="text-[10px] text-rose-400 font-black uppercase mt-1 leading-tight">Zero-Rep: ${ex.constraint}</p>
                     </div>
                     ${inputsHtml}
                     <div class="pt-2">
@@ -302,11 +305,14 @@
             }).join(' | ');
         }
 
-        function submitSession() {
+        async function submitSession() {
             try {
-                let log = `[REGISTERED_LOG: #Sprint3_${currentType.replace('&','_')}_LOCKED]
-Date: ${new Date().toISOString().split('T')[0]}
-Blueprint: Sprint 3 (Structural Hardening)
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} @ ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+                
+                let log = `[REGISTERED_LOG: #Block1Sprint4_${currentType.replace('&','_')}_WRAPPED]
+Timestamp: ${timestamp}
+Blueprint: Sprint 4 (Isometric Integration)
 
 I. PRE-SSP: ${getSSP('pre')}
 
@@ -348,24 +354,47 @@ II. WORKOUT REPORT (BIPHASIC)`;
 MG Shield: ${document.getElementById('mg-shield').value}
 Notes: ${document.getElementById('post-notes').value || 'N/A'}`;
 
-                let arc = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+                // Clipboard logic
+                const textArea = document.createElement("textarea");
+                textArea.value = log;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (err) {
+                    console.error('Fallback clipboard failed', err);
+                }
+                document.body.removeChild(textArea);
+
+                // Archive logic
+                let arc = JSON.parse(localStorage.getItem('david_s4_archive') || '[]');
                 arc.unshift(log);
-                localStorage.setItem('david_s3_archive', JSON.stringify(arc));
+                localStorage.setItem('david_s4_archive', JSON.stringify(arc));
                 
-                alert("Sprint 3 Data Registered. #LOCKED");
-                location.reload();
+                setTimeout(() => {
+                    alert("Sprint 4 Registered. Log copied to clipboard.");
+                    location.reload();
+                }, 1000);
+
             } catch (e) {
                 console.error(e);
                 alert("Error: " + e.message);
             }
         }
 
+        function showToast() {
+            const toast = document.getElementById('copy-toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+
         function loadHistory() {
-            const logs = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+            const logs = JSON.parse(localStorage.getItem('david_s4_archive') || '[]');
             document.getElementById('view-history').innerHTML = logs.map((l, i) => `
                 <div class="card p-4 font-mono text-[10px] whitespace-pre-wrap border-slate-700">
                     <div class="flex justify-between mb-2">
-                        <span class="text-sky-400 font-black">#Sprint3 Archive Entry</span>
+                        <span class="text-sky-400 font-black">#Block1Sprint4 Entry</span>
                         <button onclick="deleteLog(${i})" class="text-rose-500 font-black">DEL</button>
                     </div>
                     ${l.replace(/</g, '&lt;')}
@@ -374,10 +403,10 @@ Notes: ${document.getElementById('post-notes').value || 'N/A'}`;
         }
 
         function deleteLog(i) {
-            if(!confirm("Erase log entry?")) return;
-            let arc = JSON.parse(localStorage.getItem('david_s3_archive') || '[]');
+            if(!confirm("Erase archive entry?")) return;
+            let arc = JSON.parse(localStorage.getItem('david_s4_archive') || '[]');
             arc.splice(i, 1);
-            localStorage.setItem('david_s3_archive', JSON.stringify(arc));
+            localStorage.setItem('david_s4_archive', JSON.stringify(arc));
             loadHistory();
         }
 
